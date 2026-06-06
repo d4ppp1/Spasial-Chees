@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Spasial Chess</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a0c;--s1:#131317;--s2:#1a1a20;--s3:#222228;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#eeedf4;--muted:#7b7a8e;--hint:#4a4a5a;
+  --accent:#b8f050;--accent-dim:rgba(184,240,80,0.1);
+  --t1:#5ab4f0;--t1-bg:rgba(90,180,240,0.1);--t1-border:rgba(90,180,240,0.3);
+  --t2:#f07850;--t2-bg:rgba(240,120,80,0.1);--t2-border:rgba(240,120,80,0.3);
+  --ok:#50e090;--ok-bg:rgba(80,224,144,0.1);--ok-border:rgba(80,224,144,0.3);
+  --err:#f05050;--err-bg:rgba(240,80,80,0.1);--err-border:rgba(240,80,80,0.3);
+  --warn:#f0c050;--warn-bg:rgba(240,192,80,0.1);--warn-border:rgba(240,192,80,0.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px}
+.screen{display:none;min-height:100vh;padding:2rem 1rem;max-width:500px;margin:0 auto;flex-direction:column}
+.screen.active{display:flex}
+
+/* typography */
+.logo{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,7vw,3.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1}
+.logo span{color:var(--accent)}
+.page-title{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:0.25rem}
+.sub{font-size:13px;color:var(--muted);margin-bottom:1.5rem}
+h3{font-size:14px;font-weight:500;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.75rem}
+
+/* cards */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:1.25rem;margin-bottom:0.875rem}
+.card-sm{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:0.875rem;margin-bottom:0.875rem}
+
+/* inputs */
+input[type=text],input[type=number]{
+  width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  padding:11px 14px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;
+  outline:none;transition:border-color .2s;margin-bottom:0.875rem
+}
+input:focus{border-color:var(--accent)}
+input::placeholder{color:var(--hint)}
+
+/* buttons */
+.btn{display:block;width:100%;padding:13px;border-radius:10px;border:none;cursor:pointer;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.04em;transition:all .15s;text-align:center}
+.btn-primary{background:var(--accent);color:#0a0a0c}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);margin-top:0.5rem}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+.btn-danger{background:var(--err-bg);color:var(--err);border:1px solid var(--err-border)}
+.btn-sm{padding:8px 16px;font-size:13px;width:auto;display:inline-block}
+
+/* home nav cards */
+.nav-card{display:flex;align-items:center;gap:14px;background:var(--s1);border:1px solid var(--border);
+  border-radius:16px;padding:1.25rem;cursor:pointer;transition:all .18s;margin-bottom:0.875rem}
+.nav-card:hover{border-color:var(--border2);transform:translateX(4px)}
+.nav-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.nav-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.nav-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.nav-arr{margin-left:auto;font-size:20px;color:var(--hint)}
+
+/* code display */
+.game-code{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;letter-spacing:0.2em;
+  text-align:center;padding:1.5rem;background:var(--s2);border-radius:14px;margin-bottom:0.5rem;
+  border:1px solid var(--border)}
+.code-hint{font-size:12px;color:var(--muted);text-align:center;margin-bottom:1.25rem}
+
+/* team buttons */
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.team-btn{padding:1rem;border-radius:12px;border:1px solid var(--border);background:var(--s2);
+  color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  transition:all .15s;text-align:left}
+.team-btn .tb-name{font-size:15px;margin-bottom:4px}
+.team-btn .tb-count{font-size:12px;font-weight:400}
+.team-btn:hover{border-color:var(--border2)}
+.team-btn.sel-1{background:var(--t1-bg);border-color:var(--t1-border);color:var(--t1)}
+.team-btn.sel-2{background:var(--t2-bg);border-color:var(--t2-border);color:var(--t2)}
+
+/* badges */
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;
+  background:var(--s3);color:var(--muted);border:1px solid var(--border)}
+.badge.t1{background:var(--t1-bg);color:var(--t1);border-color:var(--t1-border)}
+.badge.t2{background:var(--t2-bg);color:var(--t2);border-color:var(--t2-border)}
+.badge.ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-border)}
+
+/* player rows */
+.p-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;
+  border-bottom:1px solid var(--border);font-size:14px}
+.p-row:last-child{border-bottom:none}
+.p-row .pn{color:var(--muted)}
+.p-row .pv{font-family:'Syne',sans-serif;font-weight:700}
+
+/* avg boxes */
+.avg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.875rem}
+.avg-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;transition:border-color .3s}
+.avg-box.win{border-color:var(--accent)}
+.avg-box .an{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;line-height:1;margin:0.4rem 0}
+.avg-box .ac{font-size:12px;color:var(--muted)}
+
+/* winner banner */
+.winner{background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:14px;
+  padding:1.25rem;text-align:center;margin-bottom:0.875rem}
+.winner .wt{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--ok)}
+.winner .ws{font-size:13px;color:var(--ok);opacity:.75;margin-top:4px}
+.loser{background:var(--err-bg);border:1px solid var(--err-border);border-radius:14px;
+  padding:1.25rem;text-align:center;margin-bottom:0.875rem}
+.loser .wt{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--err)}
+.loser .ws{font-size:13px;color:var(--err);opacity:.75;margin-top:4px}
+
+/* alerts */
+.alert{border-radius:10px;padding:11px 14px;font-size:14px;margin-bottom:0.875rem;display:none}
+.alert.show{display:block}
+.alert-s{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border)}
+.alert-e{background:var(--err-bg);color:var(--err);border:1px solid var(--err-border)}
+.alert-w{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+
+/* misc */
+.divider{border:none;border-top:1px solid var(--border);margin:0.875rem 0}
+.row-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.875rem}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--hint);display:inline-block;margin-right:6px}
+.dot.live{background:var(--ok)}
+.sent-box{text-align:center;padding:1rem 0}
+.sent-num{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:var(--accent)}
+.sent-label{font-size:13px;color:var(--muted);margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="s-home" class="screen active">
+  <div style="margin-bottom:2.5rem;padding-top:1rem">
+    <div class="logo">Spasial<span>Chess</span></div>
+    <div class="sub" style="margin-top:6px">Pilih peranmu untuk memulai</div>
+  </div>
+  <div class="nav-card" onclick="goto('s-admin-create')">
+    <div class="nav-icon" style="background:rgba(184,240,80,0.1);color:var(--accent)">♛</div>
+    <div>
+      <div class="nav-label">Admin</div>
+      <div class="nav-desc">Buat game baru & kelola ronde</div>
+    </div>
+    <div class="nav-arr">›</div>
+  </div>
+  <div class="nav-card" onclick="goto('s-join')">
+    <div class="nav-icon" style="background:var(--t1-bg);color:var(--t1)">♟</div>
+    <div>
+      <div class="nav-label">Peserta</div>
+      <div class="nav-desc">Masukkan kode & bergabung ke game</div>
+    </div>
+    <div class="nav-arr">›</div>
+  </div>
+</div>
+
+<!-- ADMIN CREATE -->
+<div id="s-admin-create" class="screen">
+  <div class="page-title">Buat Game</div>
+  <div class="sub">Game baru akan mendapatkan kode unik 5 digit</div>
+  <div id="al-ac" class="alert"></div>
+  <div class="card">
+    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">Nama game (opsional)</label>
+    <input type="text" id="ac-name" placeholder="Contoh: Spasial Chess Sesi 1"/>
+    <button class="btn btn-primary" onclick="createGame()">Buat Game & Dapatkan Kode →</button>
+  </div>
+  <button class="btn btn-ghost" onclick="goto('s-home')">← Kembali</button>
+</div>
+
+<!-- ADMIN LOBBY -->
+<div id="s-admin-lobby" class="screen">
+  <div class="row-between">
+    <div>
+      <div class="page-title" id="al-gname">Lobby</div>
+      <div class="sub" style="margin:0"><span class="dot" id="al-dot"></span>Menunggu peserta bergabung</div>
+    </div>
+  </div>
+  <div class="game-code" id="al-code">—</div>
+  <div class="code-hint">Bagikan kode ini ke semua peserta</div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
+      <h3 style="margin:0">Tim 1</h3><span class="badge t1" id="al-t1c">0/3</span>
+    </div>
+    <div id="al-t1p"><p style="font-size:13px;color:var(--hint)">Belum ada peserta</p></div>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
+      <h3 style="margin:0">Tim 2</h3><span class="badge t2" id="al-t2c">0/3</span>
+    </div>
+    <div id="al-t2p"><p style="font-size:13px;color:var(--hint)">Belum ada peserta</p></div>
+  </div>
+  <div id="al-alert" class="alert"></div>
+  <button class="btn btn-primary" id="al-start-btn" onclick="startGame()" disabled>Mulai Game</button>
+  <div style="font-size:12px;color:var(--hint);text-align:center;margin-top:6px" id="al-start-hint">Butuh minimal 1 peserta per tim</div>
+</div>
+
+<!-- ADMIN ROUND -->
+<div id="s-admin-round" class="screen">
+  <div class="row-between">
+    <div class="page-title">Ronde <span id="ar-rnum">1</span></div>
+    <span class="badge" id="ar-code-tag"></span>
+  </div>
+  <div id="ar-winner"></div>
+  <div class="avg-grid" id="ar-avgs"></div>
+  <div class="card">
+    <h3>Jawaban peserta</h3>
+    <div id="ar-t1a"></div>
+    <div class="divider"></div>
+    <div id="ar-t2a"></div>
+  </div>
+  <div class="card">
+    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">Jawaban benar (kubus)</label>
+    <div style="display:flex;gap:8px">
+      <input type="number" id="ar-correct" placeholder="Contoh: 47" style="margin:0;flex:1"/>
+      <button class="btn btn-primary btn-sm" onclick="submitCorrect()">Tentukan →</button>
+    </div>
+  </div>
+  <div id="al-ar" class="alert"></div>
+  <button class="btn btn-ghost" onclick="nextRound()">Lanjut ke Ronde Berikutnya →</button>
+</div>
+
+<!-- JOIN -->
+<div id="s-join" class="screen">
+  <div class="page-title">Bergabung</div>
+  <div class="sub">Masukkan kode game dari admin</div>
+  <div id="al-join" class="alert"></div>
+  <div class="card">
+    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">Kode game (5 digit)</label>
+    <input type="number" id="j-code" placeholder="Contoh: 23567"/>
+    <button class="btn btn-primary" onclick="findGame()">Cari Game →</button>
+  </div>
+  <button class="btn btn-ghost" onclick="goto('s-home')">← Kembali</button>
+</div>
+
+<!-- PICK TEAM -->
+<div id="s-team" class="screen">
+  <div class="page-title" id="pt-gname">Pilih Tim</div>
+  <div class="sub">Pilih tim dan masukkan namamu</div>
+  <div class="team-grid" id="pt-teams"></div>
+  <div class="card">
+    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">Nama kamu</label>
+    <input type="text" id="pt-name" placeholder="Contoh: Andi"/>
+    <button class="btn btn-primary" onclick="registerPlayer()">Masuk ke Lobby →</button>
+  </div>
+  <div id="al-pt" class="alert"></div>
+</div>
+
+<!-- PLAYER LOBBY -->
+<div id="s-player-lobby" class="screen">
+  <div class="row-between">
+    <div>
+      <div class="page-title" id="pl-gname">Lobby</div>
+      <div class="sub" style="margin:0"><span class="dot" id="pl-dot"></span>Menunggu admin memulai...</div>
+    </div>
+  </div>
+  <div class="card-sm" style="display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:15px;font-weight:500" id="pl-myname">—</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">Kode: <span style="font-family:'Syne',sans-serif;font-weight:700" id="pl-mycode">—</span></div>
+    </div>
+    <span class="badge" id="pl-mybadge">Tim —</span>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
+      <h3 style="margin:0">Tim 1</h3><span class="badge t1" id="pl-t1c">0/3</span>
+    </div>
+    <div id="pl-t1p"><p style="font-size:13px;color:var(--hint)">Belum ada</p></div>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
+      <h3 style="margin:0">Tim 2</h3><span class="badge t2" id="pl-t2c">0/3</span>
+    </div>
+    <div id="pl-t2p"><p style="font-size:13px;color:var(--hint)">Belum ada</p></div>
+  </div>
+</div>
+
+<!-- PLAYER ROUND -->
+<div id="s-player-round" class="screen">
+  <div class="row-between">
+    <div class="page-title">Ronde <span id="pr-rnum">1</span></div>
+    <span class="badge" id="pr-mybadge">Tim —</span>
+  </div>
+  <div id="pr-winner"></div>
+  <div id="al-pr" class="alert"></div>
+  <div id="pr-input-wrap" class="card">
+    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">Jawabanmu (jumlah kubus)</label>
+    <input type="number" id="pr-answer" placeholder="Contoh: 42"/>
+    <button class="btn btn-primary" onclick="submitAnswer()">Kirim Jawaban →</button>
+  </div>
+  <div class="card">
+    <h3>Jawaban tim kamu</h3>
+    <div id="pr-team-ans"><p style="font-size:13px;color:var(--hint)">Belum ada</p></div>
+  </div>
+</div>
+
+<script>
+let myCode=null,myName=null,myTeam=null,myRole=null,pollT=null;
+
+function goto(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function alert2(id,msg,type){
+  const el=document.getElementById(id);
+  el.className='alert show alert-'+type;
+  el.textContent=msg;
+  setTimeout(()=>{el.className='alert'},4000);
+}
+
+async function api(method,path,body){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body) opts.body=JSON.stringify(body);
+  const r=await fetch(path,opts);
+  return r.json();
+}
+
+async function createGame(){
+  const name=document.getElementById('ac-name').value.trim();
+  const d=await api('POST','/api/create',{name});
+  if(!d.success) return alert2('al-ac',d.error,'e');
+  myCode=d.code; myRole='admin';
+  document.getElementById('al-code').textContent=d.code;
+  document.getElementById('al-gname').textContent=name||'Spasial Chess';
+  goto('s-admin-lobby');
+  startPoll(pollAdminLobby);
+}
+
+async function pollAdminLobby(){
+  const g=await api('GET','/api/game/'+myCode);
+  if(!g.code) return;
+  if(g.status==='playing'){stopPoll();goto('s-admin-round');startPoll(pollAdminRound);return;}
+  const t1=g.players.filter(p=>p.team===1),t2=g.players.filter(p=>p.team===2);
+  document.getElementById('al-t1c').textContent=t1.length+'/3';
+  document.getElementById('al-t2c').textContent=t2.length+'/3';
+  document.getElementById('al-t1p').innerHTML=t1.length?t1.map(p=>`<div class="p-row"><span class="pn">${p.name}</span><span class="badge t1">Tim 1</span></div>`).join(''):'<p style="font-size:13px;color:var(--hint)">Belum ada peserta</p>';
+  document.getElementById('al-t2p').innerHTML=t2.length?t2.map(p=>`<div class="p-row"><span class="pn">${p.name}</span><span class="badge t2">Tim 2</span></div>`).join(''):'<p style="font-size:13px;color:var(--hint)">Belum ada peserta</p>';
+  const can=t1.length>=1&&t2.length>=1;
+  document.getElementById('al-start-btn').disabled=!can;
+  document.getElementById('al-start-hint').textContent=can?'Semua tim siap!':'Butuh minimal 1 peserta per tim';
+  document.getElementById('al-dot').className='dot'+(can?' live':'');
+}
+
+async function startGame(){
+  const d=await api('POST','/api/start',{code:myCode});
+  if(!d.success) return alert2('al-alert',d.error,'e');
+  stopPoll();
+  document.getElementById('ar-code-tag').textContent='Kode: '+myCode;
+  goto('s-admin-round');
+  startPoll(pollAdminRound);
+}
+
+async function pollAdminRound(){
+  const g=await api('GET','/api/game/'+myCode);
+  if(!g.code) return;
+  document.getElementById('ar-rnum').textContent=g.round;
+  const t1p=g.players.filter(p=>p.team===1),t2p=g.players.filter(p=>p.team===2);
+  const t1a=g.answers.filter(a=>a.team===1&&a.round===g.round);
+  const t2a=g.answers.filter(a=>a.team===2&&a.round===g.round);
+  const avg1=t1a.length?t1a.reduce((s,a)=>s+a.answer,0)/t1a.length:null;
+  const avg2=t2a.length?t2a.reduce((s,a)=>s+a.answer,0)/t2a.length:null;
+
+  document.getElementById('ar-avgs').innerHTML=[
+    {t:1,avg:avg1,cnt:t1a.length,tot:t1p.length,cls:'t1',lbl:'Tim 1'},
+    {t:2,avg:avg2,cnt:t2a.length,tot:t2p.length,cls:'t2',lbl:'Tim 2'}
+  ].map(x=>{
+    let win=false;
+    if(g.correctAnswer!==null&&avg1!==null&&avg2!==null) win=(x.t===1?Math.abs(avg1-g.correctAnswer):Math.abs(avg2-g.correctAnswer))<=(x.t===1?Math.abs(avg2-g.correctAnswer):Math.abs(avg1-g.correctAnswer));
+    else if(g.correctAnswer!==null&&x.avg!==null&&(x.t===1?avg2===null:avg1===null)) win=true;
+    return `<div class="avg-box${win?' win':''}">
+      <div><span class="badge ${x.cls}">${x.lbl}</span></div>
+      <div class="an" style="color:var(--${x.cls})">${x.avg!==null?x.avg.toFixed(1):'—'}</div>
+      <div class="ac">${x.cnt}/${x.tot} jawaban</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('ar-t1a').innerHTML=`<div style="font-size:12px;font-weight:500;color:var(--t1);margin-bottom:6px">TIM 1</div>`+(t1a.length?t1a.map(a=>`<div class="p-row"><span class="pn">${a.name}</span><span class="pv" style="color:var(--t1)">${a.answer}</span></div>`).join(''):'<p style="font-size:13px;color:var(--hint)">Belum ada jawaban</p>');
+  document.getElementById('ar-t2a').innerHTML=`<div style="font-size:12px;font-weight:500;color:var(--t2);margin-bottom:6px">TIM 2</div>`+(t2a.length?t2a.map(a=>`<div class="p-row"><span class="pn">${a.name}</span><span class="pv" style="color:var(--t2)">${a.answer}</span></div>`).join(''):'<p style="font-size:13px;color:var(--hint)">Belum ada jawaban</p>');
+
+  renderWinner('ar-winner',g,avg1,avg2,null);
+}
+
+async function submitCorrect(){
+  const v=document.getElementById('ar-correct').value;
+  if(!v||isNaN(parseFloat(v))) return alert2('al-ar','Masukkan angka jawaban benar.','e');
+  const d=await api('POST','/api/correct',{code:myCode,correct:parseFloat(v)});
+  if(!d.success) return alert2('al-ar',d.error,'e');
+  document.getElementById('ar-correct').value='';
+  pollAdminRound();
+}
+
+async function nextRound(){
+  const d=await api('POST','/api/nextround',{code:myCode});
+  if(!d.success) return;
+  document.getElementById('ar-winner').innerHTML='';
+  pollAdminRound();
+}
+
+async function findGame(){
+  const code=document.getElementById('j-code').value.trim();
+  if(!code||code.length!==5) return alert2('al-join','Kode harus 5 digit.','e');
+  const g=await api('GET','/api/game/'+code);
+  if(g.error) return alert2('al-join',g.error,'e');
+  if(g.status==='playing') return alert2('al-join','Game sudah dimulai, tidak bisa bergabung.','w');
+  myCode=code;
+  document.getElementById('pt-gname').textContent=g.name;
+  renderTeamPicker(g);
+  goto('s-team');
+}
+
+function renderTeamPicker(g){
+  const t1=g.players.filter(p=>p.team===1),t2=g.players.filter(p=>p.team===2);
+  document.getElementById('pt-teams').innerHTML=[
+    {t:1,list:t1,cls:'t1',lbl:'Tim 1'},
+    {t:2,list:t2,cls:'t2',lbl:'Tim 2'}
+  ].map(x=>`<div class="team-btn${myTeam===x.t?' sel-'+x.t:''}" id="tb-${x.t}" onclick="selTeam(${x.t})">
+    <div class="tb-name">${x.lbl}</div>
+    <div class="tb-count">${x.list.length}/3 peserta</div>
+    ${x.list.map(p=>`<div style="font-size:12px;margin-top:3px;opacity:.7">${p.name}</div>`).join('')}
+  </div>`).join('');
+}
+
+function selTeam(t){
+  myTeam=t;
+  [1,2].forEach(i=>{const b=document.getElementById('tb-'+i);if(b)b.className='team-btn'+(i===t?' sel-'+t:'');});
+}
+
+async function registerPlayer(){
+  const name=document.getElementById('pt-name').value.trim();
+  if(!myTeam) return alert2('al-pt','Pilih tim dulu.','e');
+  if(!name) return alert2('al-pt','Masukkan namamu.','e');
+  const d=await api('POST','/api/join',{code:myCode,name,team:myTeam});
+  if(!d.success) return alert2('al-pt',d.error||'Gagal bergabung.','e');
+  myName=name; myRole='player';
+  document.getElementById('pl-myname').textContent=name;
+  document.getElementById('pl-mycode').textContent=myCode;
+  const badge=document.getElementById('pl-mybadge');
+  badge.textContent='Tim '+myTeam; badge.className='badge t'+myTeam;
+  goto('s-player-lobby');
+  startPoll(pollPlayerLobby);
+}
+
+async function pollPlayerLobby(){
+  const g=await api('GET','/api/game/'+myCode);
+  if(!g.code) return;
+  document.getElementById('pl-gname').textContent=g.name;
+  const t1=g.players.filter(p=>p.team===1),t2=g.players.filter(p=>p.team===2);
+  document.getElementById('pl-t1c').textContent=t1.length+'/3';
+  document.getElementById('pl-t2c').textContent=t2.length+'/3';
+  document.getElementById('pl-t1p').innerHTML=t1.map(p=>`<div class="p-row"><span>${p.name}</span></div>`).join('')||'<p style="font-size:13px;color:var(--hint)">Belum ada</p>';
+  document.getElementById('pl-t2p').innerHTML=t2.map(p=>`<div class="p-row"><span>${p.name}</span></div>`).join('')||'<p style="font-size:13px;color:var(--hint)">Belum ada</p>';
+  const can=t1.length>=1&&t2.length>=1;
+  document.getElementById('pl-dot').className='dot'+(can?' live':'');
+  if(g.status==='playing'){
+    stopPoll();
+    document.getElementById('pr-rnum').textContent=g.round;
+    const b=document.getElementById('pr-mybadge');b.textContent='Tim '+myTeam;b.className='badge t'+myTeam;
+    goto('s-player-round');
+    startPoll(pollPlayerRound);
+  }
+}
+
+async function pollPlayerRound(){
+  const g=await api('GET','/api/game/'+myCode);
+  if(!g.code) return;
+  document.getElementById('pr-rnum').textContent=g.round;
+  const myAns=g.answers.find(a=>a.name===myName&&a.team===myTeam&&a.round===g.round);
+  const wrap=document.getElementById('pr-input-wrap');
+  if(myAns){
+    wrap.innerHTML=`<div class="sent-box"><div class="sent-label">Jawabanmu ronde ini</div><div class="sent-num">${myAns.answer}</div><div class="sent-label" style="margin-top:6px">Menunggu hasil...</div></div>`;
+  } else {
+    if(!document.getElementById('pr-answer')){
+      wrap.innerHTML=`<label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">Jawabanmu (jumlah kubus)</label><input type="number" id="pr-answer" placeholder="Contoh: 42"/><button class="btn btn-primary" onclick="submitAnswer()">Kirim Jawaban →</button>`;
+    }
+  }
+  const tAns=g.answers.filter(a=>a.team===myTeam&&a.round===g.round);
+  document.getElementById('pr-team-ans').innerHTML=tAns.length?tAns.map(a=>`<div class="p-row"><span class="pn">${a.name}</span><span class="pv">${a.answer}</span></div>`).join(''):'<p style="font-size:13px;color:var(--hint)">Belum ada</p>';
+
+  if(g.correctAnswer!==null){
+    const t1a=g.answers.filter(a=>a.team===1&&a.round===g.round);
+    const t2a=g.answers.filter(a=>a.team===2&&a.round===g.round);
+    const avg1=t1a.length?t1a.reduce((s,a)=>s+a.answer,0)/t1a.length:null;
+    const avg2=t2a.length?t2a.reduce((s,a)=>s+a.answer,0)/t2a.length:null;
+    renderWinner('pr-winner',g,avg1,avg2,myTeam);
+  } else {
+    document.getElementById('pr-winner').innerHTML='';
+  }
+}
+
+async function submitAnswer(){
+  const el=document.getElementById('pr-answer');
+  if(!el) return;
+  const v=parseFloat(el.value);
+  if(isNaN(v)) return alert2('al-pr','Masukkan angka.','e');
+  const d=await api('POST','/api/answer',{code:myCode,name:myName,team:myTeam,answer:v});
+  if(!d.success) return alert2('al-pr',d.error,'e');
+  el.value='';
+  pollPlayerRound();
+}
+
+function renderWinner(elId,g,avg1,avg2,viewerTeam){
+  const el=document.getElementById(elId);
+  if(g.correctAnswer===null){el.innerHTML='';return;}
+  let winner=null;
+  if(avg1!==null&&avg2!==null) winner=Math.abs(avg1-g.correctAnswer)<=Math.abs(avg2-g.correctAnswer)?1:2;
+  else if(avg1!==null) winner=1;
+  else if(avg2!==null) winner=2;
+  if(!winner){el.innerHTML='';return;}
+  const avgW=winner===1?avg1:avg2;
+  if(viewerTeam===null){
+    el.innerHTML=`<div class="winner"><div class="wt">Tim ${winner} berhak menggerakkan pion!</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata Tim ${winner}: ${avgW.toFixed(1)}</div></div>`;
+  } else if(viewerTeam===winner){
+    el.innerHTML=`<div class="winner"><div class="wt">Tim kamu berhak menggerakkan pion!</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata tim kamu: ${avgW.toFixed(1)}</div></div>`;
+  } else {
+    const avgMine=viewerTeam===1?avg1:avg2;
+    el.innerHTML=`<div class="loser"><div class="wt">Tim ${winner} menggerakkan pion.</div><div class="ws">Jawaban benar: ${g.correctAnswer}${avgMine?` · Rata-rata timmu: ${avgMine.toFixed(1)}`:''}</div></div>`;
+  }
+}
+
+function startPoll(fn){stopPoll();fn();pollT=setInterval(fn,2000);}
+function stopPoll(){if(pollT){clearInterval(pollT);pollT=null;}}
+</script>
+</body>
+</html>
