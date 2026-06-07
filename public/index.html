@@ -452,14 +452,23 @@ async function pollAdminRound(){
   }).join('');
 
   // answers with actual numbers (admin sees all)
+  // answers + kick buttons (admin sees all, can kick anytime)
+  function makeRoundRows(players, answers, colorVar) {
+    if (!players.length) return '<p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada pemain</p>';
+    return players.map(p => {
+      const ans = answers.find(a => a.name === p.name);
+      return `<div class="kick-row">
+        <span class="kn">${p.name} ${ans ? `<span style="font-family:'Fredoka One',cursive;color:${colorVar};margin-left:6px">${ans.answer}</span>` : '<span style="color:var(--hint);font-size:12px">belum jawab</span>'}</span>
+        <button class="kick-btn" onclick="kickPlayer('${p.name}')">Kick</button>
+      </div>`;
+    }).join('');
+  }
   document.getElementById('ar-t1a').innerHTML=
     `<div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:6px">TIM 1</div>`+
-    (t1a.length?t1a.map(a=>`<div class="p-row"><span class="pn">${a.name}</span><span class="pv" style="color:var(--t1)">${a.answer}</span></div>`).join('')
-    :'<p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada jawaban</p>');
+    makeRoundRows(t1p, t1a, 'var(--t1)');
   document.getElementById('ar-t2a').innerHTML=
     `<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">TIM 2</div>`+
-    (t2a.length?t2a.map(a=>`<div class="p-row"><span class="pn">${a.name}</span><span class="pv" style="color:var(--t2)">${a.answer}</span></div>`).join('')
-    :'<p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada jawaban</p>');
+    makeRoundRows(t2p, t2a, 'var(--t2)');
 
   renderWinner('ar-winner',g,avg1,avg2,null);
 }
@@ -561,7 +570,15 @@ async function pollPlayerLobby(){
 async function pollPlayerRound(){
   const g=await api('GET','/api/game/'+myCode);
   if(!g.code) return;
-  document.getElementById('pr-rnum').textContent=g.round;
+
+  // check if kicked mid-game
+  const stillIn=g.players.find(p=>p.name===myName&&p.team===myTeam);
+  if(!stillIn){
+    stopPoll();
+    document.getElementById('pr-winner').innerHTML=`<div class="loser-box"><div class="wt">🚫 Kamu telah di-kick oleh admin.</div><div class="ws">Kembali ke halaman utama dalam 3 detik...</div></div>`;
+    setTimeout(()=>{myCode=null;myName=null;myTeam=null;goto('s-home');},3000);
+    return;
+  }
 
   const myAns=g.answers.find(a=>a.name===myName&&a.team===myTeam&&a.round===g.round);
 
