@@ -94,15 +94,16 @@ app.post('/api/correct', (req, res) => {
   res.json({ success: true });
 });
 
-// POST /api/kick — admin kicks a player from lobby
+// POST /api/kick — admin kicks a player (lobby or in-game)
 app.post('/api/kick', (req, res) => {
   const { code, name } = req.body;
   const game = games[code];
   if (!game) return res.status(404).json({ error: 'Game tidak ditemukan' });
-  if (game.status !== 'lobby') return res.status(400).json({ error: 'Hanya bisa kick saat lobby' });
   const before = game.players.length;
   game.players = game.players.filter(p => p.name !== name);
   if (game.players.length === before) return res.status(404).json({ error: 'Pemain tidak ditemukan' });
+  // also remove their answers from current round so avg isn't skewed
+  game.answers = game.answers.filter(a => a.name !== name);
   res.json({ success: true });
 });
 
