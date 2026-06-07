@@ -94,6 +94,18 @@ app.post('/api/correct', (req, res) => {
   res.json({ success: true });
 });
 
+// POST /api/kick — admin kicks a player from lobby
+app.post('/api/kick', (req, res) => {
+  const { code, name } = req.body;
+  const game = games[code];
+  if (!game) return res.status(404).json({ error: 'Game tidak ditemukan' });
+  if (game.status !== 'lobby') return res.status(400).json({ error: 'Hanya bisa kick saat lobby' });
+  const before = game.players.length;
+  game.players = game.players.filter(p => p.name !== name);
+  if (game.players.length === before) return res.status(404).json({ error: 'Pemain tidak ditemukan' });
+  res.json({ success: true });
+});
+
 // POST /api/nextround — admin advances round
 app.post('/api/nextround', (req, res) => {
   const { code } = req.body;
