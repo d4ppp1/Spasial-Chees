@@ -639,7 +639,11 @@ async function submitAnswer(){
 /* ── HELPERS ── */
 function calcWinner(g,avg1,avg2){
   if(g.correctAnswer===null) return null;
-  if(avg1!==null&&avg2!==null) return Math.abs(avg1-g.correctAnswer)<=Math.abs(avg2-g.correctAnswer)?1:2;
+  if(avg1!==null&&avg2!==null){
+    const d1=Math.abs(avg1-g.correctAnswer), d2=Math.abs(avg2-g.correctAnswer);
+    if(d1===d2) return g.tieWinner||null; // use server-resolved random
+    return d1<d2?1:2;
+  }
   if(avg1!==null) return 1;
   if(avg2!==null) return 2;
   return null;
@@ -648,16 +652,27 @@ function calcWinner(g,avg1,avg2){
 function renderWinner(elId,g,avg1,avg2,viewerTeam){
   const el=document.getElementById(elId);
   if(g.correctAnswer===null){el.innerHTML='';return;}
+  // check if it's a tie situation
+  const isTie=avg1!==null&&avg2!==null&&Math.abs(avg1-g.correctAnswer)===Math.abs(avg2-g.correctAnswer);
   const winner=calcWinner(g,avg1,avg2);
-  if(!winner){el.innerHTML='';return;}
+  if(!winner&&!isTie){el.innerHTML='';return;}
+  // still waiting for tieWinner to be resolved
+  if(isTie&&!g.tieWinner){
+    el.innerHTML=`<div class="winner-box" style="background:var(--warn-bg);border-color:var(--warn-border)">
+      <div class="wt" style="color:var(--warn)">🎲 Seri! Mengundi tim yang bergerak...</div>
+      <div class="ws" style="color:var(--warn)">Kedua tim selisihnya sama: ${Math.abs(avg1-g.correctAnswer).toFixed(1)}</div>
+    </div>`;
+    return;
+  }
   const avgW=(winner===1?avg1:avg2).toFixed(1);
+  const tieNote=isTie?` · 🎲 Hasil undian`:'';
   if(viewerTeam===null){
-    el.innerHTML=`<div class="winner-box"><div class="wt">🏆 Tim ${winner} berhak menggerakkan pion!</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata Tim ${winner}: ${avgW}</div></div>`;
+    el.innerHTML=`<div class="winner-box">${isTie?'<div style="font-size:12px;color:var(--ok);margin-bottom:4px;font-weight:700">🎲 SERI — HASIL UNDIAN</div>':''}<div class="wt">🏆 Tim ${winner} berhak menggerakkan pion!</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata Tim ${winner}: ${avgW}${tieNote}</div></div>`;
   } else if(viewerTeam===winner){
-    el.innerHTML=`<div class="winner-box"><div class="wt">🎉 Tim kamu berhak menggerakkan pion!</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata tim kamu: ${avgW}</div></div>`;
+    el.innerHTML=`<div class="winner-box">${isTie?'<div style="font-size:12px;color:var(--ok);margin-bottom:4px;font-weight:700">🎲 SERI — KAMU MENANG UNDIAN!</div>':''}<div class="wt">🎉 Tim kamu berhak menggerakkan pion!</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata tim kamu: ${avgW}</div></div>`;
   } else {
     const avgMine=((viewerTeam===1?avg1:avg2)||0).toFixed(1);
-    el.innerHTML=`<div class="loser-box"><div class="wt">😔 Tim ${winner} menggerakkan pion.</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata timmu: ${avgMine}</div></div>`;
+    el.innerHTML=`<div class="loser-box">${isTie?'<div style="font-size:12px;color:var(--err);margin-bottom:4px;font-weight:700">🎲 SERI — KALAH UNDIAN</div>':''}<div class="wt">😔 Tim ${winner} menggerakkan pion.</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata timmu: ${avgMine}</div></div>`;
   }
 }
 
