@@ -377,6 +377,10 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
 .rejoin-card .rj-title{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#ffe066;margin-bottom:6px}
 .rejoin-card .rj-desc{font-size:13px;color:var(--muted);font-weight:600;line-height:1.5}
 
+/* ── MOVE COUNTER WARNING ── */
+@keyframes warn-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.move-warn{animation:warn-pulse 1s infinite}
+
 /* ── RESPONSIVE ── */
 @media(max-width:680px){
   .game-layout{flex-direction:column}
@@ -647,6 +651,7 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
       <div class="team-info">
         <div class="tn" id="t1-name">Tim 1</div>
         <div class="ts" id="t1-status">Menunggu giliran</div>
+        <div class="ts" style="margin-top:2px">Gerak: <span id="move-count-1" style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--t1)">0</span><span style="opacity:.5">/15</span></div>
       </div>
     </div>
     <div class="turn-chip" id="turn-chip">VS</div>
@@ -654,6 +659,7 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
       <div class="team-info" style="text-align:right">
         <div class="tn" id="t2-name">Tim 2</div>
         <div class="ts" id="t2-status">Menunggu giliran</div>
+        <div class="ts" style="margin-top:2px">Gerak: <span id="move-count-2" style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--t2)">0</span><span style="opacity:.5">/15</span></div>
       </div>
       <div class="team-icon">🟠</div>
     </div>
@@ -1187,6 +1193,8 @@ const PIECE_SYM={
 let boardCode=null,boardState=null,boardPollT=null;
 let boardArr=[],selected=null,validMoves=[];
 let currentTurn=1,movingTeam=null,boardRound=1,gameOver=false,lastRound=0;
+let moveCount={1:0,2:0}; // jumlah gerak per tim
+const MOVE_LIMIT=15;
 
 /* ═══════════════════════════════════════
    BOARD — CONNECT
@@ -1201,6 +1209,7 @@ async function connectBoard(){
   document.getElementById('hdr-code').textContent=code;
   document.getElementById('hdr-name').textContent=g.name||'Spasial Chess';
   initBoard(); renderBoard(); goto('s-board');
+  updateTurnUI(); updateMoveCounterUI();
   startBoardPoll();
   addLog('Tersambung ke game '+code,'log-move');
 }
@@ -1216,6 +1225,7 @@ function disconnectBoard(){
    BOARD — INIT & RENDER
 ═══════════════════════════════════════ */
 function initBoard(){
+  moveCount={1:0,2:0};
   boardArr=Array(ROWS).fill(null).map(()=>Array(COLS).fill(null));
   boardArr[0][0]={type:'pawn',team:1};
   boardArr[1][0]={type:'knight',team:1};
@@ -1324,23 +1334,41 @@ function doMove(fr,fc,tr,tc){
   const captured=boardArr[tr][tc];
   boardArr[tr][tc]=piece;boardArr[fr][fc]=null;
   selected=null;validMoves=[];
+
+  // Hitung gerak tim ini
+  moveCount[movingTeam]=(moveCount[movingTeam]||0)+1;
+  updateMoveCounterUI();
+
   if(captured){
-    addLog(`Tim ${movingTeam} menangkap ${captured.type} Tim ${captured.team} di ${ROW_LABELS[tr]}${COL_LABELS[tc]}!`,'log-win');
-    if(captured.type==='king'){endGame(movingTeam);return;}
+    addLog(`Tim ${movingTeam} menangkap ${captured.type} Tim ${captured.team} di ${ROW_LABELS[tr]}${COL_LABELS[tc]}! (Gerak #${moveCount[movingTeam]})`,'log-win');
+    if(captured.type==='king'){endGame(movingTeam,'king');return;}
   } else {
-    addLog(`Tim ${movingTeam}: ${piece.type} ${ROW_LABELS[fr]}${COL_LABELS[fc]}→${ROW_LABELS[tr]}${COL_LABELS[tc]}`,'log-move');
+    addLog(`Tim ${movingTeam}: ${piece.type} ${ROW_LABELS[fr]}${COL_LABELS[fc]}→${ROW_LABELS[tr]}${COL_LABELS[tc]} (Gerak #${moveCount[movingTeam]})`,'log-move');
   }
+
+  // Cek batas 15 gerak
+  if(moveCount[movingTeam]>=MOVE_LIMIT){endGame(movingTeam,'moves');return;}
+
   movingTeam=null;renderBoard();
   document.getElementById('move-prompt').style.display='none';
   document.getElementById('next-round-panel').style.display='block';
 }
 
-function endGame(winner){
+function endGame(winner,reason){
   gameOver=true;movingTeam=null;renderBoard();
-  document.getElementById('win-title').textContent=`Tim ${winner} Menang! 🎉`;
-  document.getElementById('win-desc').textContent=`Raja Tim ${winner===1?2:1} berhasil ditangkap!`;
+  const loser=winner===1?2:1;
+  let title,desc;
+  if(reason==='king'){
+    title=`🏆 Tim ${winner} Menang!`;
+    desc=`Raja Tim ${loser} berhasil ditangkap!`;
+  } else {
+    title=`🏆 Tim ${winner} Menang!`;
+    desc=`Tim ${winner} berhasil menggerakkan pion sebanyak ${MOVE_LIMIT}x!`;
+  }
+  document.getElementById('win-title').textContent=title;
+  document.getElementById('win-desc').textContent=desc;
   document.getElementById('modal-win').classList.remove('hidden');
-  addLog(`🏆 GAME OVER — Tim ${winner} menang!`,'log-win');
+  addLog(`🏆 GAME OVER — ${title} ${desc}`,'log-win');
 }
 
 /* ═══════════════════════════════════════
@@ -1445,7 +1473,22 @@ function showBoardResult(g,avg1,avg2){
   }
 }
 
-function updateTurnUI(){
+function updateMoveCounterUI(){
+  const c1=document.getElementById('move-count-1');
+  const c2=document.getElementById('move-count-2');
+  if(c1){
+    c1.textContent=moveCount[1];
+    const near1=moveCount[1]>=MOVE_LIMIT-3;
+    c1.style.color=near1?'var(--err)':'var(--t1)';
+    c1.className=near1?'move-warn':'';
+  }
+  if(c2){
+    c2.textContent=moveCount[2];
+    const near2=moveCount[2]>=MOVE_LIMIT-3;
+    c2.style.color=near2?'var(--err)':'var(--t2)';
+    c2.className=near2?'move-warn':'';
+  }
+}
   const b1=document.getElementById('badge-t1');
   const b2=document.getElementById('badge-t2');
   b1.className='team-status'+(currentTurn===1?' active-turn t1-active':'');
@@ -1458,7 +1501,8 @@ function updateTurnUI(){
 function resetBoardGame(){
   gameOver=false;selected=null;validMoves=[];
   currentTurn=1;movingTeam=null;lastRound=0;
-  initBoard();renderBoard();updateTurnUI();
+  moveCount={1:0,2:0};
+  initBoard();renderBoard();updateTurnUI();updateMoveCounterUI();
   document.getElementById('modal-win').classList.add('hidden');
   document.getElementById('result-area').innerHTML='';
   document.getElementById('avg-grid').style.display='none';
