@@ -83,7 +83,7 @@ app.post('/api/answer', (req, res) => {
   res.json({ success: true });
 });
 
-// POST /api/correct — admin sets correct answer, auto-resolve tie by random
+// POST /api/correct — admin sets correct answer
 app.post('/api/correct', (req, res) => {
   const { code, correct } = req.body;
   const game = games[code];
@@ -91,18 +91,6 @@ app.post('/api/correct', (req, res) => {
   const val = parseFloat(correct);
   if (isNaN(val)) return res.status(400).json({ error: 'Jawaban harus angka' });
   game.correctAnswer = val;
-
-  // compute avgs and detect tie
-  const t1a = game.answers.filter(a => a.team === 1 && a.round === game.round);
-  const t2a = game.answers.filter(a => a.team === 2 && a.round === game.round);
-  const avg1 = t1a.length ? t1a.reduce((s,a) => s+a.answer, 0) / t1a.length : null;
-  const avg2 = t2a.length ? t2a.reduce((s,a) => s+a.answer, 0) / t2a.length : null;
-  if (avg1 !== null && avg2 !== null && Math.abs(avg1 - val) === Math.abs(avg2 - val)) {
-    game.tieWinner = Math.random() < 0.5 ? 1 : 2; // random resolve
-  } else {
-    game.tieWinner = null;
-  }
-
   res.json({ success: true });
 });
 
@@ -126,7 +114,6 @@ app.post('/api/nextround', (req, res) => {
   if (!game) return res.status(404).json({ error: 'Game tidak ditemukan' });
   game.round += 1;
   game.correctAnswer = null;
-  game.tieWinner = null;
   res.json({ success: true, round: game.round });
 });
 
