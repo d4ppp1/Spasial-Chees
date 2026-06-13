@@ -1,4 +1,3 @@
-cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -21,6 +20,7 @@ cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
   --warn:#ffe066;--warn-bg:rgba(255,224,102,0.15);--warn-border:rgba(255,224,102,0.5);
   --star:#ffe066;
   --board-light:#F5E6C0;--board-dark:#8B2752;
+  --accent:#D4205A;--gold:#ffe066;
   --radius:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -31,62 +31,87 @@ body{
   color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;
   position:relative;overflow-x:hidden;
 }
-body::before{content:'';position:fixed;top:-120px;right:-80px;width:400px;height:400px;
+body::before{
+  content:'';position:fixed;top:-120px;right:-80px;width:400px;height:400px;
   background:radial-gradient(circle,rgba(255,200,50,0.18) 0%,transparent 70%);
-  border-radius:50%;pointer-events:none;z-index:0;}
-body::after{content:'';position:fixed;bottom:-100px;left:-60px;width:350px;height:350px;
+  border-radius:50%;pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;bottom:-100px;left:-60px;width:350px;height:350px;
   background:radial-gradient(circle,rgba(96,212,255,0.15) 0%,transparent 70%);
-  border-radius:50%;pointer-events:none;z-index:0;}
+  border-radius:50%;pointer-events:none;z-index:0;
+}
 
+/* ── SCREENS ── */
 .screen{display:none;min-height:100vh;padding:1.75rem 1rem 2rem;max-width:480px;margin:0 auto;flex-direction:column;position:relative;z-index:1}
 .screen.active{display:flex}
+/* Papan catur screen pakai layout lebar */
 #s-board{max-width:1080px;padding:1rem}
 
+/* ── LOGO ── */
 .logo{font-family:'Fredoka One',cursive;font-size:clamp(2.6rem,9vw,4.2rem);line-height:1;
   text-shadow:0 4px 24px rgba(0,0,0,0.3);letter-spacing:0.01em}
 .logo .c1{color:#ffe066}.logo .c2{color:#fff}.logo .c3{color:#6affa0}
 .logo-sub{font-size:13px;color:var(--muted);margin-top:4px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase}
 .star{display:inline-block;color:var(--star);font-size:1.2rem;margin:0 4px}
 
-.card{background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:20px;padding:1.25rem;margin-bottom:1rem}
-.card-title{font-family:'Fredoka One',cursive;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem}
+/* ── CARDS ── */
+.card{background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);
+  border-radius:20px;padding:1.25rem;margin-bottom:1rem}
+.card-title{font-family:'Fredoka One',cursive;font-size:13px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem}
 
+/* ── INPUTS ── */
 input[type=text],input[type=number]{
   width:100%;background:rgba(0,0,0,0.25);border:1.5px solid var(--border);border-radius:12px;
   padding:12px 14px;color:#fff;font-size:15px;font-family:'Nunito',sans-serif;font-weight:600;
-  outline:none;transition:border-color .2s;margin-bottom:1rem}
+  outline:none;transition:border-color .2s;margin-bottom:1rem
+}
 input:focus{border-color:var(--border2)}
 input::placeholder{color:var(--hint)}
 
+/* ── BUTTONS ── */
 .btn{display:block;width:100%;padding:14px;border-radius:14px;border:none;cursor:pointer;
-  font-family:'Fredoka One',cursive;font-size:16px;letter-spacing:0.04em;transition:all .15s;text-align:center}
-.btn-primary{background:linear-gradient(135deg,#ffe066,#ffb347);color:#2d0a4e;box-shadow:0 4px 20px rgba(255,179,71,0.4)}
+  font-family:'Fredoka One',cursive;font-size:16px;letter-spacing:0.04em;
+  transition:all .15s;text-align:center}
+.btn-primary{
+  background:linear-gradient(135deg,#ffe066,#ffb347);
+  color:#2d0a4e;box-shadow:0 4px 20px rgba(255,179,71,0.4)
+}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(255,179,71,0.5)}
 .btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
-.btn-success{background:linear-gradient(135deg,#6affa0,#3dd68c);color:#0a2e1a;box-shadow:0 4px 20px rgba(106,255,160,0.35)}
+.btn-success{
+  background:linear-gradient(135deg,#6affa0,#3dd68c);
+  color:#0a2e1a;box-shadow:0 4px 20px rgba(106,255,160,0.35)
+}
 .btn-success:hover{transform:translateY(-2px)}
 .btn-ghost{background:var(--surface2);color:var(--muted);border:1.5px solid var(--border);margin-top:0.5rem}
 .btn-ghost:hover{border-color:var(--border2);color:#fff}
 .btn-danger{background:var(--err-bg);color:var(--err);border:1.5px solid var(--err-border)}
-.btn-warn{background:var(--warn-bg);color:var(--warn);border:1.5px solid var(--warn-border)}
 .btn-sm{padding:6px 14px;font-size:13px;width:auto;display:inline-block;border-radius:10px}
 
+/* ── HOME NAV CARDS ── */
 .nav-card{display:flex;align-items:center;gap:14px;background:var(--surface);
   backdrop-filter:blur(12px);border:1.5px solid var(--border);border-radius:20px;
   padding:1.25rem;cursor:pointer;transition:all .18s;margin-bottom:1rem}
 .nav-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,0.2)}
-.nav-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.nav-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;
+  justify-content:center;font-size:24px;flex-shrink:0}
 .nav-label{font-family:'Fredoka One',cursive;font-size:17px;color:#fff}
 .nav-desc{font-size:12px;color:var(--muted);margin-top:3px;font-weight:600}
 .nav-arr{margin-left:auto;font-size:22px;color:var(--hint)}
 
-.game-code{font-family:'Fredoka One',cursive;font-size:3.5rem;letter-spacing:0.25em;
+/* ── GAME CODE ── */
+.game-code{
+  font-family:'Fredoka One',cursive;font-size:3.5rem;letter-spacing:0.25em;
   text-align:center;padding:1.5rem;
   background:linear-gradient(135deg,rgba(255,224,102,0.2),rgba(255,179,71,0.2));
   border-radius:18px;margin-bottom:0.5rem;border:2px solid rgba(255,200,80,0.4);
-  color:#ffe066;text-shadow:0 2px 12px rgba(255,200,80,0.5)}
+  color:#ffe066;text-shadow:0 2px 12px rgba(255,200,80,0.5)
+}
 .code-hint{font-size:12px;color:var(--muted);text-align:center;margin-bottom:1.25rem;font-weight:600}
 
+/* ── TEAM BUTTONS ── */
 .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
 .team-btn{padding:1rem;border-radius:16px;border:2px solid var(--border);background:var(--surface2);
   color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;
@@ -97,58 +122,50 @@ input::placeholder{color:var(--hint)}
 .team-btn.sel-1{background:var(--t1-bg);border-color:var(--t1-border);color:var(--t1)}
 .team-btn.sel-2{background:var(--t2-bg);border-color:var(--t2-border);color:var(--t2)}
 
+/* ── BADGES ── */
 .badge{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;
   background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-family:'Nunito',sans-serif}
 .badge.t1{background:var(--t1-bg);color:var(--t1);border-color:var(--t1-border)}
 .badge.t2{background:var(--t2-bg);color:var(--t2);border-color:var(--t2-border)}
 .badge.ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-border)}
-.badge.offline{background:var(--err-bg);color:var(--err);border-color:var(--err-border)}
 
+/* ── PLAYER ROWS ── */
 .p-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;
   border-bottom:1px solid var(--border);font-size:14px;font-weight:600}
 .p-row:last-child{border-bottom:none}
+.p-row .pn{color:var(--muted)}
+.p-row .pv{font-family:'Fredoka One',cursive;font-size:16px}
 
+/* ── KICK ROW ── */
 .kick-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;
-  border-bottom:1px solid var(--border);font-size:14px;font-weight:600;gap:8px;flex-wrap:wrap}
+  border-bottom:1px solid var(--border);font-size:14px;font-weight:600}
 .kick-row:last-child{border-bottom:none}
+.kick-row .kn{color:var(--text)}
 .kick-btn{background:var(--err-bg);color:var(--err);border:1px solid var(--err-border);
-  border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s}
+  border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;
+  font-family:'Nunito',sans-serif;transition:all .15s}
 .kick-btn:hover{background:rgba(255,107,107,0.3)}
-.approve-btn{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border);
-  border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s}
-.approve-btn:hover{background:rgba(106,255,160,0.3)}
-.deny-btn{background:var(--err-bg);color:var(--err);border:1px solid var(--err-border);
-  border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif}
 
-/* Rejoin notification card */
-.rejoin-notif{background:var(--warn-bg);border:2px solid var(--warn-border);border-radius:16px;
-  padding:12px 14px;margin-bottom:10px;animation:pulse-warn 1.5s infinite}
-@keyframes pulse-warn{0%,100%{box-shadow:0 0 0 0 rgba(255,224,102,0.4)}50%{box-shadow:0 0 0 6px rgba(255,224,102,0)}}
-.rejoin-notif .rn-title{font-family:'Fredoka One',cursive;font-size:14px;color:var(--warn);margin-bottom:6px}
-.rejoin-notif .rn-name{font-weight:800;color:#fff}
-.rejoin-notif .rn-team{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px}
-.rejoin-notif .rn-btns{display:flex;gap:8px}
-
+/* ── AVG BOXES ── */
 .avg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
-.avg-box{background:var(--surface2);border:2px solid var(--border);border-radius:16px;padding:1rem;text-align:center;transition:all .3s}
+.avg-box{background:var(--surface2);border:2px solid var(--border);border-radius:16px;
+  padding:1rem;text-align:center;transition:all .3s}
 .avg-box.win{border-color:var(--ok);background:var(--ok-bg);box-shadow:0 0 20px rgba(106,255,160,0.2)}
-.avg-box.tie{border-color:var(--warn);background:var(--warn-bg);}
 .avg-box .an{font-family:'Fredoka One',cursive;font-size:2.5rem;line-height:1;margin:0.4rem 0}
 .avg-box .ac{font-size:12px;color:var(--muted);font-weight:600}
 
+/* ── WINNER BANNER ── */
 .winner-box{background:var(--ok-bg);border:2px solid var(--ok-border);border-radius:18px;
-  padding:1.25rem;text-align:center;margin-bottom:1rem;box-shadow:0 0 30px rgba(106,255,160,0.2)}
+  padding:1.25rem;text-align:center;margin-bottom:1rem;
+  box-shadow:0 0 30px rgba(106,255,160,0.2)}
 .winner-box .wt{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--ok)}
 .winner-box .ws{font-size:13px;color:var(--ok);opacity:.8;margin-top:5px;font-weight:600}
-.tie-box{background:var(--warn-bg);border:2px solid var(--warn-border);border-radius:18px;
-  padding:1.25rem;text-align:center;margin-bottom:1rem;box-shadow:0 0 30px rgba(255,224,102,0.2)}
-.tie-box .wt{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--warn)}
-.tie-box .ws{font-size:13px;color:var(--warn);opacity:.8;margin-top:5px;font-weight:600}
 .loser-box{background:var(--err-bg);border:2px solid var(--err-border);border-radius:18px;
   padding:1.25rem;text-align:center;margin-bottom:1rem}
 .loser-box .wt{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--err)}
 .loser-box .ws{font-size:13px;color:var(--err);opacity:.8;margin-top:5px;font-weight:600}
 
+/* ── ANSWERED CHIP ── */
 .answered-chip{display:inline-flex;align-items:center;gap:6px;background:var(--ok-bg);
   border:1px solid var(--ok-border);border-radius:99px;padding:5px 12px;
   font-size:13px;font-weight:700;color:var(--ok);margin:3px}
@@ -157,19 +174,18 @@ input::placeholder{color:var(--hint)}
   border:1px solid var(--border);border-radius:99px;padding:5px 12px;
   font-size:13px;font-weight:700;color:var(--muted);margin:3px}
 .waiting-chip::before{content:'···'}
-.offline-chip{display:inline-flex;align-items:center;gap:6px;background:var(--err-bg);
-  border:1px solid var(--err-border);border-radius:99px;padding:5px 12px;
-  font-size:13px;font-weight:700;color:var(--err);margin:3px}
-.offline-chip::before{content:'✕'}
 
+/* ── ALERTS ── */
 .alert{border-radius:12px;padding:12px 14px;font-size:14px;font-weight:700;margin-bottom:1rem;display:none}
 .alert.show{display:block}
 .alert-s{background:var(--ok-bg);color:var(--ok);border:1.5px solid var(--ok-border)}
 .alert-e{background:var(--err-bg);color:var(--err);border:1.5px solid var(--err-border)}
 .alert-w{background:var(--warn-bg);color:var(--warn);border:1.5px solid var(--warn-border)}
+/* alert style untuk mascot */
 .alert.e{background:var(--err-bg);border:1px solid var(--err-border);color:var(--err);display:block}
 .alert.s{background:var(--ok-bg);border:1px solid var(--ok-border);color:var(--ok);display:block}
 
+/* ── MISC ── */
 .divider{border:none;border-top:1px solid var(--border);margin:0.875rem 0}
 .row-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--hint);display:inline-block;margin-right:6px}
@@ -182,102 +198,186 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
 .sent-label{font-size:13px;color:var(--muted);margin-top:4px;font-weight:600}
 .chips-wrap{display:flex;flex-wrap:wrap;padding:4px 0}
 
-/* offline banner for player */
-.offline-banner{background:var(--err-bg);border:2px solid var(--err-border);border-radius:16px;
-  padding:16px;text-align:center;margin-bottom:1rem}
-.offline-banner .ob-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--err);margin-bottom:6px}
-.offline-banner .ob-sub{font-size:13px;color:var(--err);opacity:.8;font-weight:600;margin-bottom:12px}
-
-/* ── BOARD ── */
-.board-header{background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);
-  border-radius:20px;padding:14px 24px;display:flex;align-items:center;gap:16px;width:100%;position:relative;z-index:1;margin-bottom:0}
+/* ── BOARD SCREEN SPECIFIC ── */
+.board-header{
+  background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);
+  border-radius:20px;padding:14px 24px;display:flex;align-items:center;gap:16px;
+  width:100%;position:relative;z-index:1;margin-bottom:0;
+}
 .board-header .logo{font-size:2rem}
 .header-info{flex:1}
 .header-title{font-size:13px;color:rgba(255,255,255,0.6);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .header-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
-.game-code-pill{font-family:'Fredoka One',cursive;font-size:1.4rem;letter-spacing:.15em;
+.game-code-pill{
+  font-family:'Fredoka One',cursive;font-size:1.4rem;letter-spacing:.15em;
   background:linear-gradient(135deg,rgba(255,224,102,.2),rgba(255,179,71,.2));
-  border:2px solid rgba(255,200,80,.4);border-radius:12px;padding:6px 18px;color:#ffe066}
+  border:2px solid rgba(255,200,80,.4);border-radius:12px;padding:6px 18px;
+  color:#ffe066;
+}
 .poll-row{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.55);font-weight:600;margin-left:8px}
 .poll-dot{width:8px;height:8px;border-radius:50%;background:var(--err);flex-shrink:0}
 .poll-dot.live{background:var(--ok);animation:blink 1.2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 
+/* ── STATUS ROW (BOARD) ── */
 .status-row{display:flex;gap:12px;align-items:stretch}
-.team-status{flex:1;background:var(--surface);backdrop-filter:blur(10px);border:2px solid var(--border);
-  border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;transition:all .3s}
+.team-status{
+  flex:1;background:var(--surface);backdrop-filter:blur(10px);border:2px solid var(--border);
+  border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;
+  transition:all .3s;
+}
+.team-status.active-turn{box-shadow:0 0 20px rgba(255,224,102,.4)}
 .team-status.t1-active{border-color:var(--t1-border);background:var(--t1-bg)}
 .team-status.t2-active{border-color:var(--t2-border);background:var(--t2-bg)}
 .team-icon{font-size:28px}
 .team-info .tn{font-family:'Fredoka One',cursive;font-size:16px}
 .team-info .ts{font-size:11px;color:rgba(255,255,255,.6);font-weight:600;margin-top:2px}
-.turn-chip{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0 14px;
-  font-size:22px;display:flex;align-items:center;justify-content:center}
+.turn-chip{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:0 14px;font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+}
 
+/* ── GAME LAYOUT (BOARD) ── */
 .game-layout{display:flex;gap:14px;align-items:flex-start}
-.board-wrap{background:var(--surface);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:20px;padding:16px;flex:1}
-.board-grid{display:grid;grid-template-columns:28px repeat(9,1fr) 28px;grid-template-rows:28px repeat(4,1fr) 28px;
-  background:#111;border-radius:8px;overflow:hidden;aspect-ratio:11/6}
-.coord{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;
-  color:rgba(255,255,255,.75);background:#111;font-family:'Fredoka One',cursive}
-.cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:filter .12s}
-.cell.light{background:var(--board-light)}.cell.dark{background:var(--board-dark)}
+.board-wrap{
+  background:var(--surface);backdrop-filter:blur(10px);border:1px solid var(--border);
+  border-radius:20px;padding:16px;flex:1;
+}
+.board-grid{
+  display:grid;
+  grid-template-columns:28px repeat(9,1fr) 28px;
+  grid-template-rows:28px repeat(4,1fr) 28px;
+  background:#111;border-radius:8px;overflow:hidden;
+  aspect-ratio:11/6;
+}
+.coord{
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;color:rgba(255,255,255,.75);
+  background:#111;font-family:'Fredoka One',cursive;
+}
+.cell{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:filter .12s;
+}
+.cell.light{background:var(--board-light)}
+.cell.dark{background:var(--board-dark)}
 .cell:hover{filter:brightness(1.15)}
 .cell.selected{outline:3px solid #ffe066;outline-offset:-3px;z-index:3}
-.cell.valid-move::after{content:'';position:absolute;width:36%;height:36%;border-radius:50%;
-  background:rgba(255,224,102,.7);pointer-events:none;z-index:2}
-.cell.valid-capture::after{content:'';position:absolute;inset:3px;border-radius:4px;
-  border:3px solid rgba(255,100,100,.85);pointer-events:none;z-index:2}
-.piece{font-size:clamp(16px,3.2vw,36px);line-height:1;position:relative;z-index:1;pointer-events:none;
-  filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));transition:transform .1s}
+.cell.valid-move::after{
+  content:'';position:absolute;width:36%;height:36%;border-radius:50%;
+  background:rgba(255,224,102,.7);pointer-events:none;z-index:2;
+}
+.cell.valid-capture::after{
+  content:'';position:absolute;inset:3px;border-radius:4px;
+  border:3px solid rgba(255,100,100,.85);pointer-events:none;z-index:2;
+}
+.piece{
+  font-size:clamp(16px,3.2vw,36px);line-height:1;
+  position:relative;z-index:1;pointer-events:none;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));
+  transition:transform .1s;
+}
 .piece-white{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7)}
 .piece-black{color:#111;text-shadow:0 1px 2px rgba(255,255,255,.2)}
 
+/* ── SIDE PANEL (BOARD) ── */
 .side-panel{width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:12px}
-.panel{background:var(--surface);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.panel{
+  background:var(--surface);backdrop-filter:blur(10px);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;
+}
 .panel h3{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5);font-weight:800;margin-bottom:10px}
+.board-btn-sm{padding:8px 12px;font-size:13px;width:auto;border-radius:10px}
 
+/* ── CORRECT ANSWER (BOARD) ── */
+.correct-row{display:flex;gap:8px;align-items:center}
+.correct-row input{width:90px;font-size:18px;padding:8px;margin:0;text-align:center;letter-spacing:0}
+.correct-row .btn{flex:1;padding:10px;font-size:13px}
+
+/* ── RESULT BOX (BOARD) ── */
 .result-banner{border-radius:14px;padding:12px;text-align:center;margin-top:8px}
 .result-banner.win{background:var(--ok-bg);border:1.5px solid var(--ok-border)}
-.result-banner.win .rb-big{color:var(--ok)}
-.result-banner.tie{background:var(--warn-bg);border:1.5px solid var(--warn-border)}
-.result-banner.tie .rb-big{color:var(--warn)}
+.result-banner.lose{background:var(--err-bg);border:1.5px solid var(--err-border)}
 .result-banner .rb-big{font-family:'Fredoka One',cursive;font-size:1.15rem}
+.result-banner.win .rb-big{color:var(--ok)}
+.result-banner.lose .rb-big{color:var(--err)}
 .result-banner .rb-sm{font-size:11px;opacity:.7;margin-top:4px;font-weight:600}
 
+/* ── AVG GRID (BOARD) ── */
 .board-avg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .avg-box-b{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:8px;text-align:center;transition:all .3s}
 .avg-box-b.win-box{border-color:var(--ok);background:var(--ok-bg)}
-.avg-box-b.tie-box{border-color:var(--warn);background:var(--warn-bg)}
 .avg-box-b .ab-num{font-family:'Fredoka One',cursive;font-size:1.8rem;line-height:1}
 .avg-box-b.win-box .ab-num{color:var(--ok)}
-.avg-box-b.tie-box .ab-num{color:var(--warn)}
 .avg-box-b .ab-lbl{font-size:11px;color:rgba(255,255,255,.55);font-weight:600;margin-top:3px}
 
+/* ── LOG (BOARD) ── */
 .log-area{height:110px;overflow-y:auto;font-size:12px;line-height:1.7}
 .log-area p{border-bottom:1px solid rgba(255,255,255,.07);padding:2px 0}
 .log-area p:last-child{border:none}
-.log-move{color:#9AEFCA}.log-q{color:#FFD590}.log-win{color:#ffe066;font-weight:800}.log-err{color:#ff9090}
+.log-move{color:#9AEFCA}
+.log-q{color:#FFD590}
+.log-win{color:#ffe066;font-weight:800}
+.log-err{color:#ff9090}
 
+/* ── PLAYER CHIPS (BOARD) ── */
 .ans-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;
+  padding:4px 10px;border-radius:99px}
 .chip.answered{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border)}
 .chip.waiting{background:var(--surface2);color:rgba(255,255,255,.5);border:1px solid var(--border)}
-.chip.offline{background:var(--err-bg);color:var(--err);border:1px solid var(--err-border)}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+/* ── WIN MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.8);
+  display:flex;align-items:center;justify-content:center;
+  z-index:100;padding:20px;
+}
 .modal-overlay.hidden{display:none}
-.modal{background:linear-gradient(160deg,#2C1832 0%,#1A0F22 100%);border:1px solid rgba(255,255,255,.2);
-  border-radius:24px;padding:32px;width:100%;max-width:440px;text-align:center}
+.modal{
+  background:linear-gradient(160deg,#2C1832 0%,#1A0F22 100%);
+  border:1px solid rgba(255,255,255,.2);border-radius:24px;
+  padding:32px;width:100%;max-width:440px;text-align:center;
+}
 .trophy{font-size:64px;margin-bottom:12px}
 .modal h2{font-family:'Fredoka One',cursive;font-size:2rem;color:#ffe066;margin-bottom:8px}
 .modal p{color:rgba(255,255,255,.7);font-size:14px;font-weight:600;margin-bottom:24px}
 
-.connect-card{background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);
-  border-radius:24px;padding:2rem;max-width:480px;width:100%;margin:auto;display:flex;flex-direction:column;gap:16px}
+/* ── CONNECT CARD (BOARD) ── */
+.connect-card{
+  background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);
+  border-radius:24px;padding:2rem;max-width:480px;width:100%;margin:auto;
+  display:flex;flex-direction:column;gap:16px;
+}
 .connect-card h2{font-family:'Fredoka One',cursive;font-size:1.8rem;color:#ffe066;text-align:center}
 .connect-card p{font-size:13px;color:rgba(255,255,255,.6);text-align:center;font-weight:600}
 
+/* ── REJOIN REQUEST NOTIF ── */
+.rejoin-notif{
+  background:rgba(255,224,102,0.12);border:1.5px solid rgba(255,224,102,0.45);
+  border-radius:14px;padding:12px 14px;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.rejoin-notif .rj-info{flex:1}
+.rejoin-notif .rj-name{font-family:'Fredoka One',cursive;font-size:15px;color:#ffe066}
+.rejoin-notif .rj-sub{font-size:12px;color:rgba(255,255,255,.55);font-weight:600;margin-top:2px}
+.rejoin-notif .rj-btns{display:flex;gap:6px;flex-shrink:0}
+.btn-approve{background:rgba(106,255,160,0.15);color:var(--ok);border:1px solid rgba(106,255,160,0.5);
+  border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif}
+.btn-deny{background:rgba(255,107,107,0.15);color:var(--err);border:1px solid rgba(255,107,107,0.5);
+  border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif}
+
+/* ── REJOIN SCREEN (player) ── */
+.rejoin-card{
+  background:var(--surface);backdrop-filter:blur(12px);border:1.5px solid var(--warn-border);
+  border-radius:20px;padding:1.5rem;text-align:center;margin-bottom:1rem;
+}
+.rejoin-card .rj-icon{font-size:3rem;margin-bottom:0.5rem}
+.rejoin-card .rj-title{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#ffe066;margin-bottom:6px}
+.rejoin-card .rj-desc{font-size:13px;color:var(--muted);font-weight:600;line-height:1.5}
+
+/* ── RESPONSIVE ── */
 @media(max-width:680px){
   .game-layout{flex-direction:column}
   .side-panel{width:100%}
@@ -288,7 +388,9 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
 </head>
 <body>
 
-<!-- HOME -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- HOME                                                   -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-home" class="screen active">
   <div style="margin-bottom:2.5rem;padding-top:0.5rem;text-align:center">
     <div style="font-size:2.5rem;margin-bottom:0.5rem">♟ ♛ ♞</div>
@@ -296,18 +398,27 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
     <div class="logo-sub"><span class="star">★</span> Mathematics & Sains Competition <span class="star">★</span></div>
   </div>
   <div class="nav-card" onclick="goto('s-admin-create')">
-    <div class="nav-icon" style="background:rgba(255,224,102,0.2)">👑</div>
-    <div><div class="nav-label">Admin</div><div class="nav-desc">Buat game baru & kelola ronde</div></div>
+    <div class="nav-icon" style="background:rgba(255,224,102,0.2);font-size:28px">👑</div>
+    <div>
+      <div class="nav-label">Admin</div>
+      <div class="nav-desc">Buat game baru & kelola ronde</div>
+    </div>
     <div class="nav-arr">›</div>
   </div>
   <div class="nav-card" onclick="goto('s-join')">
-    <div class="nav-icon" style="background:rgba(96,212,255,0.2)">🎮</div>
-    <div><div class="nav-label">Peserta</div><div class="nav-desc">Masukkan kode & bergabung ke game</div></div>
+    <div class="nav-icon" style="background:rgba(96,212,255,0.2);font-size:28px">🎮</div>
+    <div>
+      <div class="nav-label">Peserta</div>
+      <div class="nav-desc">Masukkan kode & bergabung ke game</div>
+    </div>
     <div class="nav-arr">›</div>
   </div>
   <div class="nav-card" onclick="goto('s-board-connect')">
-    <div class="nav-icon" style="background:rgba(106,255,160,0.2)">♟</div>
-    <div><div class="nav-label">Papan Catur</div><div class="nav-desc">Tampilan papan MASCOT untuk proyektor</div></div>
+    <div class="nav-icon" style="background:rgba(106,255,160,0.2);font-size:28px">♟</div>
+    <div>
+      <div class="nav-label">Papan Catur</div>
+      <div class="nav-desc">Tampilan papan MASCOT untuk proyektor</div>
+    </div>
     <div class="nav-arr">›</div>
   </div>
   <div style="text-align:center;margin-top:1.5rem">
@@ -315,7 +426,9 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
   </div>
 </div>
 
-<!-- ADMIN CREATE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ADMIN CREATE                                           -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-admin-create" class="screen">
   <div class="page-title">🎲 Buat Game</div>
   <div class="sub">Game baru akan mendapatkan kode unik 5 digit</div>
@@ -328,7 +441,9 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
   <button class="btn btn-ghost" onclick="goto('s-home')">← Kembali</button>
 </div>
 
-<!-- ADMIN LOBBY -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ADMIN LOBBY                                            -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-admin-lobby" class="screen">
   <div class="row-between">
     <div>
@@ -350,20 +465,22 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
     <div id="al-t2p"><p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada peserta</p></div>
   </div>
   <div id="al-alert" class="alert"></div>
+  <div id="al-rejoin-panel" style="display:none;margin-bottom:1rem">
+    <h3 style="margin-bottom:8px">🔔 Permintaan Masuk Kembali</h3>
+    <div id="al-rejoin-list"></div>
+  </div>
   <button class="btn btn-success" id="al-start-btn" onclick="startGame()" disabled>Mulai Game! 🚀</button>
   <div style="font-size:12px;color:var(--hint);text-align:center;margin-top:8px;font-weight:600" id="al-start-hint">Butuh minimal 1 peserta per tim</div>
 </div>
 
-<!-- ADMIN ROUND -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ADMIN ROUND                                            -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-admin-round" class="screen">
   <div class="row-between">
     <div class="page-title">⚡ Ronde <span id="ar-rnum">1</span></div>
     <span class="badge" id="ar-code-tag"></span>
   </div>
-
-  <!-- Rejoin requests section -->
-  <div id="ar-rejoin-section"></div>
-
   <div id="ar-winner"></div>
   <div class="avg-grid" id="ar-avgs"></div>
   <div class="card">
@@ -380,10 +497,16 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
     </div>
   </div>
   <div id="al-ar" class="alert"></div>
+  <div id="ar-rejoin-panel" style="display:none">
+    <h3 style="margin-bottom:8px">🔔 Permintaan Masuk Kembali</h3>
+    <div id="ar-rejoin-list"></div>
+  </div>
   <button class="btn btn-ghost" onclick="nextRoundAdmin()">Lanjut ke Ronde Berikutnya →</button>
 </div>
 
-<!-- JOIN -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- JOIN                                                   -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-join" class="screen">
   <div class="page-title">🎯 Bergabung</div>
   <div class="sub">Masukkan kode game dari admin</div>
@@ -396,7 +519,9 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
   <button class="btn btn-ghost" onclick="goto('s-home')">← Kembali</button>
 </div>
 
-<!-- PICK TEAM -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PICK TEAM                                              -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-team" class="screen">
   <div class="page-title" id="pt-gname">🏆 Pilih Tim</div>
   <div class="sub">Pilih tim dan masukkan namamu</div>
@@ -409,7 +534,9 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
   <div id="al-pt" class="alert"></div>
 </div>
 
-<!-- PLAYER LOBBY -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PLAYER LOBBY                                           -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-player-lobby" class="screen">
   <div class="row-between">
     <div>
@@ -438,19 +565,31 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
   </div>
 </div>
 
-<!-- PLAYER ROUND -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- REJOIN REQUEST (player waiting for admin approval)     -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="s-rejoin" class="screen">
+  <div style="margin-top:40px">
+    <div class="rejoin-card">
+      <div class="rj-icon">🚪</div>
+      <div class="rj-title">Meminta Izin Masuk</div>
+      <div class="rj-desc">Kamu sudah keluar dari game.<br>Permintaan kamu sudah dikirim ke admin.<br>Tunggu admin untuk menyetujui.</div>
+    </div>
+    <div id="al-rejoin" class="alert"></div>
+    <div id="rj-status-box" style="text-align:center;padding:1rem 0">
+      <div style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--muted)">⏳ Menunggu persetujuan admin...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PLAYER ROUND                                           -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-player-round" class="screen">
   <div class="row-between">
     <div class="page-title">⚡ Ronde <span id="pr-rnum">1</span></div>
     <span class="badge" id="pr-mybadge">Tim —</span>
   </div>
-  <!-- offline banner -->
-  <div id="pr-offline-banner" style="display:none" class="offline-banner">
-    <div class="ob-title">📡 Kamu Terdeteksi Offline</div>
-    <div class="ob-sub">Kirim permintaan ke admin untuk masuk kembali</div>
-    <button class="btn btn-warn" onclick="sendRejoinRequest()" style="max-width:280px;margin:0 auto">Minta Izin Admin untuk Masuk Kembali</button>
-  </div>
-  <div id="pr-rejoin-status" style="display:none" class="alert alert-w">Menunggu persetujuan admin...</div>
   <div id="pr-winner"></div>
   <div id="al-pr" class="alert"></div>
   <div id="pr-input-wrap" class="card"></div>
@@ -460,7 +599,9 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
   </div>
 </div>
 
-<!-- BOARD CONNECT -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- BOARD CONNECT                                          -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-board-connect" class="screen">
   <div style="margin-top:40px">
     <div class="connect-card">
@@ -480,8 +621,11 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
   </div>
 </div>
 
-<!-- BOARD GAME -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- BOARD GAME                                             -->
+<!-- ═══════════════════════════════════════════════════════ -->
 <div id="s-board" class="screen">
+  <!-- Header -->
   <div class="board-header">
     <div class="logo" style="font-size:2rem"><span class="c1">Ma</span><span class="c2">S</span><span class="c1">Co</span><span class="c3">T</span></div>
     <div class="header-info">
@@ -496,6 +640,7 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
     <button class="btn btn-ghost" onclick="disconnectBoard()" style="width:auto;padding:8px 14px;margin:0;margin-left:8px;font-size:13px">✕ Keluar</button>
   </div>
 
+  <!-- Status Row -->
   <div class="status-row">
     <div class="team-status" id="badge-t1">
       <div class="team-icon">🔵</div>
@@ -514,10 +659,14 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
     </div>
   </div>
 
+  <!-- Main Layout -->
   <div class="game-layout">
+    <!-- Board -->
     <div class="board-wrap">
       <div class="board-grid" id="board"></div>
     </div>
+
+    <!-- Side Panel -->
     <div class="side-panel">
 
       <!-- Round Info -->
@@ -539,9 +688,8 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
         </div>
       </div>
 
-      <!-- Result / Move prompt -->
-      <div class="panel" id="result-panel" style="display:none">
-        <h3>✅ Hasil Ronde</h3>
+      <!-- Result -->
+      <div class="panel" id="board-result-panel" style="display:none">
         <div id="result-area"></div>
         <div id="move-prompt" style="display:none;margin-top:10px">
           <div style="font-size:12px;color:rgba(255,255,255,.6);font-weight:700;margin-bottom:6px" id="move-prompt-lbl">
@@ -560,7 +708,9 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
       <!-- Log -->
       <div class="panel">
         <h3>📋 Log</h3>
-        <div class="log-area" id="log"><p>Menyambungkan ke server...</p></div>
+        <div class="log-area" id="log">
+          <p>Menyambungkan ke server...</p>
+        </div>
       </div>
     </div>
   </div>
@@ -577,42 +727,45 @@ h3{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-
 </div>
 
 <script>
-/* ═══════ SHARED ═══════ */
-let myCode=null,myName=null,myTeam=null,myRole=null,pollT=null;
-let playerOnline=true,rejoinSent=false,rejoinApproved=false;
+/* ═══════════════════════════════════════
+   SHARED STATE & HELPERS
+═══════════════════════════════════════ */
+let myCode=null,myName=null,myTeam=null,myRole=null,pollT=null,rejoinPollT=null;
+
+// Poin 3: otomatis leave saat tab/browser ditutup
+window.addEventListener('beforeunload', () => {
+  if(myName && myCode && myRole==='player') {
+    navigator.sendBeacon('/api/leave', JSON.stringify({code:myCode,name:myName,team:myTeam}));
+  }
+});
 
 function goto(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
+
 function alert2(id,msg,type){
   const el=document.getElementById(id);
-  if(!el)return;
   el.className='alert show alert-'+type;
   el.textContent=msg;
-  setTimeout(()=>{if(el)el.className='alert';},4000);
+  setTimeout(()=>{el.className='alert'},4000);
 }
+
 async function api(method,path,body){
   const opts={method,headers:{'Content-Type':'application/json'}};
   if(body) opts.body=JSON.stringify(body);
-  try{const r=await fetch(path,opts);return r.json();}
-  catch(e){return {error:'Koneksi gagal'};}
+  try{
+    const r=await fetch(path,opts);
+    return r.json();
+  }catch(e){return {error:'Koneksi gagal'};}
 }
+
 function startPoll(fn){stopPoll();fn();pollT=setInterval(fn,2000);}
 function stopPoll(){if(pollT){clearInterval(pollT);pollT=null;}}
 
-/* ═══════ HEARTBEAT ═══════ */
-let heartbeatT=null;
-function startHeartbeat(){
-  stopHeartbeat();
-  heartbeatT=setInterval(async()=>{
-    if(!myCode||!myName||!myTeam) return;
-    await api('POST','/api/heartbeat',{code:myCode,name:myName,team:myTeam});
-  },3000);
-}
-function stopHeartbeat(){if(heartbeatT){clearInterval(heartbeatT);heartbeatT=null;}}
-
-/* ═══════ ADMIN CREATE ═══════ */
+/* ═══════════════════════════════════════
+   ADMIN CREATE
+═══════════════════════════════════════ */
 async function createGame(){
   const name=document.getElementById('ac-name').value.trim();
   const d=await api('POST','/api/create',{name});
@@ -623,25 +776,28 @@ async function createGame(){
   startPoll(pollAdminLobby);
 }
 
-/* ═══════ ADMIN LOBBY ═══════ */
+/* ═══════════════════════════════════════
+   ADMIN LOBBY POLL
+═══════════════════════════════════════ */
 async function pollAdminLobby(){
   const g=await api('GET','/api/game/'+myCode);
   if(!g.code) return;
-  if(g.status==='playing'){stopPoll();document.getElementById('ar-code-tag').textContent='Kode: '+myCode;goto('s-admin-round');startPoll(pollAdminRound);return;}
+  if(g.status==='playing'){stopPoll();goto('s-admin-round');document.getElementById('ar-code-tag').textContent='Kode: '+myCode;startPoll(pollAdminRound);return;}
   const t1=g.players.filter(p=>p.team===1),t2=g.players.filter(p=>p.team===2);
   document.getElementById('al-t1c').textContent=t1.length+'/3';
   document.getElementById('al-t2c').textContent=t2.length+'/3';
   document.getElementById('al-t1p').innerHTML=t1.length
-    ?t1.map(p=>`<div class="kick-row"><span>${p.name}</span><button class="kick-btn" onclick="kickPlayer('${p.name}')">Kick</button></div>`).join('')
-    :'<p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada peserta</p>';
+    ? t1.map(p=>`<div class="kick-row"><span class="kn">${p.name}</span><button class="kick-btn" onclick="kickPlayer('${p.name}')">Kick</button></div>`).join('')
+    : '<p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada peserta</p>';
   document.getElementById('al-t2p').innerHTML=t2.length
-    ?t2.map(p=>`<div class="kick-row"><span>${p.name}</span><button class="kick-btn" onclick="kickPlayer('${p.name}')">Kick</button></div>`).join('')
-    :'<p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada peserta</p>';
+    ? t2.map(p=>`<div class="kick-row"><span class="kn">${p.name}</span><button class="kick-btn" onclick="kickPlayer('${p.name}')">Kick</button></div>`).join('')
+    : '<p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada peserta</p>';
   const can=t1.length>=1&&t2.length>=1;
   document.getElementById('al-start-btn').disabled=!can;
   document.getElementById('al-start-hint').textContent=can?'✅ Semua tim siap! Mulai sekarang':'Butuh minimal 1 peserta per tim';
   document.getElementById('al-dot').className='dot'+(can?' live':'');
   document.getElementById('al-status-text').textContent=can?'Siap dimulai!':'Menunggu peserta...';
+  renderRejoinNotifs(g,'al-rejoin-panel','al-rejoin-list');
 }
 
 async function kickPlayer(name){
@@ -659,78 +815,50 @@ async function startGame(){
   startPoll(pollAdminRound);
 }
 
-/* ═══════ ADMIN ROUND ═══════ */
+/* ═══════════════════════════════════════
+   ADMIN ROUND POLL
+═══════════════════════════════════════ */
 async function pollAdminRound(){
   const g=await api('GET','/api/game/'+myCode);
   if(!g.code) return;
   document.getElementById('ar-rnum').textContent=g.round;
-
-  // Rejoin requests
-  const pending=(g.rejoinRequests||[]).filter(r=>r.status==='pending');
-  const sec=document.getElementById('ar-rejoin-section');
-  sec.innerHTML=pending.length?pending.map(r=>`
-    <div class="rejoin-notif">
-      <div class="rn-title">🔔 Permintaan Masuk Kembali</div>
-      <div class="rn-name">${r.name}</div>
-      <div class="rn-team">Tim ${r.team}</div>
-      <div class="rn-btns">
-        <button class="approve-btn" onclick="approveRejoin('${r.name}')">✅ Izinkan</button>
-        <button class="deny-btn" onclick="denyRejoin('${r.name}')">❌ Tolak</button>
-      </div>
-    </div>`).join(''):'';
-
   const t1p=g.players.filter(p=>p.team===1),t2p=g.players.filter(p=>p.team===2);
   const t1a=g.answers.filter(a=>a.team===1&&a.round===g.round);
   const t2a=g.answers.filter(a=>a.team===2&&a.round===g.round);
   const avg1=t1a.length?t1a.reduce((s,a)=>s+a.answer,0)/t1a.length:null;
   const avg2=t2a.length?t2a.reduce((s,a)=>s+a.answer,0)/t2a.length:null;
 
-  // Avg boxes
-  let winner=calcWinner(g,avg1,avg2);
-  let isTie=g.correctAnswer!==null&&avg1!==null&&avg2!==null&&Math.abs(Math.abs(avg1-g.correctAnswer)-Math.abs(avg2-g.correctAnswer))<0.0001;
-
   document.getElementById('ar-avgs').innerHTML=[
     {t:1,avg:avg1,cnt:t1a.length,tot:t1p.length,cls:'t1',lbl:'Tim 1'},
     {t:2,avg:avg2,cnt:t2a.length,tot:t2p.length,cls:'t2',lbl:'Tim 2'}
   ].map(x=>{
-    let cls='avg-box';
-    if(winner===x.t&&!isTie) cls+=' win';
-    if(isTie&&winner===x.t) cls+=' tie';
-    return `<div class="${cls}">
+    let win=calcWinner(g,avg1,avg2)===x.t;
+    return `<div class="avg-box${win?' win':''}">
       <div><span class="badge ${x.cls}">${x.lbl}</span></div>
       <div class="an" style="color:var(--${x.cls})">${x.avg!==null?x.avg.toFixed(1):'—'}</div>
       <div class="ac">${x.cnt}/${x.tot} jawaban</div>
     </div>`;
   }).join('');
 
-  // Per player rows
-  function makeRows(players,answers,colorVar){
-    if(!players.length) return '<p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada pemain</p>';
-    return players.map(p=>{
-      const ans=answers.find(a=>a.name===p.name);
-      const onlineDot=p.online===false?'<span class="badge offline" style="font-size:10px;margin-left:6px">Offline</span>':'';
+  function makeRoundRows(players, answers, colorVar) {
+    if (!players.length) return '<p style="font-size:13px;color:var(--hint);font-weight:600">Belum ada pemain</p>';
+    return players.map(p => {
+      const ans = answers.find(a => a.name === p.name);
       return `<div class="kick-row">
-        <span style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
-          <span>${p.name}</span>${onlineDot}
-          ${ans?`<span style="font-family:'Fredoka One',cursive;color:${colorVar};margin-left:6px">${ans.answer}</span>`:'<span style="color:var(--hint);font-size:12px">belum jawab</span>'}
-        </span>
+        <span class="kn">${p.name} ${ans ? `<span style="font-family:'Fredoka One',cursive;color:${colorVar};margin-left:6px">${ans.answer}</span>` : '<span style="color:var(--hint);font-size:12px">belum jawab</span>'}</span>
         <button class="kick-btn" onclick="kickPlayer('${p.name}')">Kick</button>
       </div>`;
     }).join('');
   }
-  document.getElementById('ar-t1a').innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:6px">TIM 1</div>`+makeRows(t1p,t1a,'var(--t1)');
-  document.getElementById('ar-t2a').innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">TIM 2</div>`+makeRows(t2p,t2a,'var(--t2)');
+  document.getElementById('ar-t1a').innerHTML=
+    `<div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:6px">TIM 1</div>`+
+    makeRoundRows(t1p, t1a, 'var(--t1)');
+  document.getElementById('ar-t2a').innerHTML=
+    `<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">TIM 2</div>`+
+    makeRoundRows(t2p, t2a, 'var(--t2)');
 
   renderWinner('ar-winner',g,avg1,avg2,null);
-}
-
-async function approveRejoin(name){
-  await api('POST','/api/rejoin-approve',{code:myCode,name});
-  pollAdminRound();
-}
-async function denyRejoin(name){
-  await api('POST','/api/rejoin-deny',{code:myCode,name});
-  pollAdminRound();
+  renderRejoinNotifs(g,'ar-rejoin-panel','ar-rejoin-list');
 }
 
 async function submitCorrectAdmin(){
@@ -749,15 +877,35 @@ async function nextRoundAdmin(){
   pollAdminRound();
 }
 
-/* ═══════ PLAYER JOIN ═══════ */
+/* ═══════════════════════════════════════
+   PLAYER JOIN
+═══════════════════════════════════════ */
 async function findGame(){
   const code=document.getElementById('j-code').value.trim();
   if(!code||code.length!==5) return alert2('al-join','Kode harus 5 digit.','e');
   const g=await api('GET','/api/game/'+code);
   if(g.error) return alert2('al-join',g.error,'e');
-  if(g.status==='playing') return alert2('al-join','Game sudah dimulai, tidak bisa bergabung.','w');
   myCode=code;
+  if(g.status==='playing'){
+    // Cek apakah nama ini pernah ada di game (untuk rejoin)
+    const nameEl=document.getElementById('j-name-wrap');
+    if(!nameEl){
+      // Tampilkan form nama & tim untuk rejoin
+      document.getElementById('al-join').className='alert show alert-w';
+      document.getElementById('al-join').textContent='Game sudah dimulai. Jika kamu peserta yang keluar, masukkan nama & tim untuk minta izin masuk kembali.';
+      renderTeamPicker(g);
+      goto('s-team');
+      document.getElementById('pt-gname').textContent='🔄 Minta Masuk Kembali';
+      // Ubah tombol untuk mode rejoin
+      document.querySelector('#s-team .btn-primary').setAttribute('onclick','requestRejoin()');
+      document.querySelector('#s-team .btn-primary').textContent='Minta Izin Masuk Kembali →';
+    }
+    return;
+  }
   document.getElementById('pt-gname').textContent='🏆 '+g.name;
+  // Reset tombol ke normal kalau sebelumnya diubah
+  document.querySelector('#s-team .btn-primary').setAttribute('onclick','registerPlayer()');
+  document.querySelector('#s-team .btn-primary').textContent='Masuk ke Lobby →';
   renderTeamPicker(g);
   goto('s-team');
 }
@@ -791,11 +939,72 @@ async function registerPlayer(){
   const badge=document.getElementById('pl-mybadge');
   badge.textContent='Tim '+myTeam; badge.className='badge t'+myTeam;
   goto('s-player-lobby');
-  startHeartbeat();
   startPoll(pollPlayerLobby);
 }
 
-/* ═══════ PLAYER LOBBY POLL ═══════ */
+async function requestRejoin(){
+  const name=document.getElementById('pt-name').value.trim();
+  if(!myTeam) return alert2('al-pt','Pilih tim kamu dulu.','e');
+  if(!name) return alert2('al-pt','Masukkan namamu.','e');
+  const d=await api('POST','/api/rejoin-request',{code:myCode,name,team:myTeam});
+  if(d.error) return alert2('al-pt',d.error,'e');
+  myName=name; myRole='player';
+  // Langsung ke screen menunggu persetujuan
+  goto('s-rejoin');
+  startRejoinPoll();
+}
+
+function startRejoinPoll(){
+  if(rejoinPollT) clearInterval(rejoinPollT);
+  rejoinPollT=setInterval(pollRejoinStatus,2000);
+  pollRejoinStatus();
+}
+function stopRejoinPoll(){if(rejoinPollT){clearInterval(rejoinPollT);rejoinPollT=null;}}
+
+async function pollRejoinStatus(){
+  const g=await api('GET','/api/game/'+myCode);
+  if(g.error){
+    document.getElementById('rj-status-box').innerHTML=`<div style="color:var(--err);font-weight:700">⚠️ Koneksi terputus</div>`;
+    return;
+  }
+  const req=g.rejoinRequests&&g.rejoinRequests.find(r=>r.name===myName);
+  if(!req){
+    // Cek apakah langsung di-add (approved)
+    const inGame=g.players.find(p=>p.name===myName&&p.team===myTeam);
+    if(inGame){
+      stopRejoinPoll();
+      enterGameAsPlayer(g);
+    }
+    return;
+  }
+  if(req.status==='approved'){
+    stopRejoinPoll();
+    enterGameAsPlayer(g);
+  } else if(req.status==='denied'){
+    stopRejoinPoll();
+    document.getElementById('rj-status-box').innerHTML=`<div class="loser-box" style="text-align:center"><div class="wt">❌ Permintaan Ditolak</div><div class="ws">Admin menolak permintaanmu.</div></div>`;
+    setTimeout(()=>{myCode=null;myName=null;myTeam=null;goto('s-home');},3000);
+  }
+}
+
+function enterGameAsPlayer(g){
+  document.getElementById('pr-rnum').textContent=g.round;
+  const b=document.getElementById('pr-mybadge');b.textContent='Tim '+myTeam;b.className='badge t'+myTeam;
+  if(g.status==='playing'){
+    goto('s-player-round');
+    renderPlayerInputWrap(true);
+    startPoll(pollPlayerRound);
+  } else {
+    document.getElementById('pl-myname').textContent=myName;
+    document.getElementById('pl-mycode').textContent=myCode;
+    const badge2=document.getElementById('pl-mybadge');
+    badge2.textContent='Tim '+myTeam;badge2.className='badge t'+myTeam;
+    goto('s-player-lobby');
+    startPoll(pollPlayerLobby);
+  }
+}
+
+
 async function pollPlayerLobby(){
   const g=await api('GET','/api/game/'+myCode);
   if(!g.code) return;
@@ -807,7 +1016,7 @@ async function pollPlayerLobby(){
 
   const stillIn=g.players.find(p=>p.name===myName&&p.team===myTeam);
   if(!stillIn){
-    stopPoll();stopHeartbeat();
+    stopPoll();
     document.getElementById('pl-kicked-alert').style.display='block';
     setTimeout(()=>{myCode=null;myName=null;myTeam=null;goto('s-home');},3000);
     return;
@@ -819,60 +1028,29 @@ async function pollPlayerLobby(){
     stopPoll();
     document.getElementById('pr-rnum').textContent=g.round;
     const b=document.getElementById('pr-mybadge');b.textContent='Tim '+myTeam;b.className='badge t'+myTeam;
-    playerOnline=true; rejoinSent=false; rejoinApproved=false;
     goto('s-player-round');
     renderPlayerInputWrap(false);
     startPoll(pollPlayerRound);
   }
 }
 
-/* ═══════ PLAYER ROUND POLL ═══════ */
+/* ═══════════════════════════════════════
+   PLAYER ROUND POLL
+═══════════════════════════════════════ */
 async function pollPlayerRound(){
   const g=await api('GET','/api/game/'+myCode);
   if(!g.code) return;
 
-  // Check if still in game
-  const meInGame=g.players.find(p=>p.name===myName&&p.team===myTeam);
-  if(!meInGame){
-    stopPoll();stopHeartbeat();
+  const stillIn=g.players.find(p=>p.name===myName&&p.team===myTeam);
+  if(!stillIn){
+    stopPoll();
     document.getElementById('pr-winner').innerHTML=`<div class="loser-box"><div class="wt">🚫 Kamu telah di-kick oleh admin.</div><div class="ws">Kembali ke halaman utama dalam 3 detik...</div></div>`;
     setTimeout(()=>{myCode=null;myName=null;myTeam=null;goto('s-home');},3000);
     return;
   }
 
-  // Check online status from server
-  const meData=g.players.find(p=>p.name===myName&&p.team===myTeam);
-  const serverSaysOffline= meData && meData.online===false;
-
-  // Check rejoin request status
-  const myReq=(g.rejoinRequests||[]).find(r=>r.name===myName);
-  if(myReq){
-    if(myReq.status==='approved'){
-      // Back online!
-      playerOnline=true; rejoinSent=false; rejoinApproved=true;
-      document.getElementById('pr-offline-banner').style.display='none';
-      document.getElementById('pr-rejoin-status').style.display='none';
-    } else if(myReq.status==='denied'){
-      document.getElementById('pr-rejoin-status').className='alert alert-e show';
-      document.getElementById('pr-rejoin-status').textContent='Permintaan ditolak admin. Hubungi admin.';
-      document.getElementById('pr-rejoin-status').style.display='block';
-      rejoinSent=false;
-    } else if(myReq.status==='pending'){
-      document.getElementById('pr-rejoin-status').style.display='block';
-      document.getElementById('pr-offline-banner').style.display='none';
-    }
-  }
-
-  if(serverSaysOffline&&!rejoinSent&&!rejoinApproved){
-    playerOnline=false;
-    document.getElementById('pr-offline-banner').style.display='block';
-    document.getElementById('pr-input-wrap').innerHTML='';
-    return;
-  }
-
-  document.getElementById('pr-offline-banner').style.display='none';
-
   const myAns=g.answers.find(a=>a.name===myName&&a.team===myTeam&&a.round===g.round);
+
   if(myAns){
     document.getElementById('pr-input-wrap').innerHTML=`
       <div class="sent-box">
@@ -884,13 +1062,13 @@ async function pollPlayerRound(){
     renderPlayerInputWrap(true);
   }
 
-  // Team answer chips
   const myTeamPlayers=g.players.filter(p=>p.team===myTeam);
   const myTeamAnswers=g.answers.filter(a=>a.team===myTeam&&a.round===g.round);
   document.getElementById('pr-team-ans').innerHTML=myTeamPlayers.map(p=>{
     const answered=myTeamAnswers.find(a=>a.name===p.name);
-    if(p.online===false) return `<span class="offline-chip">${p.name}</span>`;
-    return answered?`<span class="answered-chip">${p.name}</span>`:`<span class="waiting-chip">${p.name}</span>`;
+    return answered
+      ? `<span class="answered-chip">${p.name}</span>`
+      : `<span class="waiting-chip">${p.name}</span>`;
   }).join('');
 
   if(g.correctAnswer!==null){
@@ -924,75 +1102,95 @@ async function submitAnswer(){
   pollPlayerRound();
 }
 
-async function sendRejoinRequest(){
-  rejoinSent=true;
-  await api('POST','/api/rejoin-request',{code:myCode,name:myName,team:myTeam});
-  document.getElementById('pr-offline-banner').style.display='none';
-  document.getElementById('pr-rejoin-status').style.display='block';
-  document.getElementById('pr-rejoin-status').className='alert alert-w show';
-  document.getElementById('pr-rejoin-status').textContent='Menunggu persetujuan admin...';
-}
-
-/* ═══════ SHARED HELPERS ═══════ */
+/* ═══════════════════════════════════════
+   SHARED HELPERS
+═══════════════════════════════════════ */
 function calcWinner(g,avg1,avg2){
   if(g.correctAnswer===null) return null;
-  if(avg1!==null&&avg2!==null){
-    const d1=Math.abs(avg1-g.correctAnswer),d2=Math.abs(avg2-g.correctAnswer);
-    if(Math.abs(d1-d2)<0.0001){
-      // TIE — use tiebreaker from server
-      return g.tiebreaker||1;
-    }
-    return d1<=d2?1:2;
-  }
-  if(avg1!==null) return 1;
-  if(avg2!==null) return 2;
-  return null;
+  if(avg1===null&&avg2===null) return null;
+  if(avg1===null) return 2;
+  if(avg2===null) return 1;
+  const d1=Math.abs(avg1-g.correctAnswer);
+  const d2=Math.abs(avg2-g.correctAnswer);
+  if(d1<d2) return 1;
+  if(d2<d1) return 2;
+  // SERI — tiebreak: tim yang pesertanya jawab duluan
+  const roundAnswers=g.answers.filter(a=>a.round===g.round);
+  const t1first=roundAnswers.filter(a=>a.team===1).reduce((min,a)=>a.timestamp<min?a.timestamp:min,Infinity);
+  const t2first=roundAnswers.filter(a=>a.team===2).reduce((min,a)=>a.timestamp<min?a.timestamp:min,Infinity);
+  if(t1first<=t2first) return 1;
+  return 2;
 }
 
 function renderWinner(elId,g,avg1,avg2,viewerTeam){
   const el=document.getElementById(elId);
-  if(!el) return;
   if(g.correctAnswer===null){el.innerHTML='';return;}
-  if(avg1===null&&avg2===null){el.innerHTML='';return;}
-
-  const isTie=avg1!==null&&avg2!==null&&Math.abs(Math.abs(avg1-g.correctAnswer)-Math.abs(avg2-g.correctAnswer))<0.0001;
   const winner=calcWinner(g,avg1,avg2);
-  const avgW=(winner===1?avg1:avg2);
-  const avgWStr=avgW!==null?avgW.toFixed(1):'—';
-
-  if(isTie){
-    const tieName=g.tiebreakerName||'?';
-    const tieTeam=g.tiebreaker||winner;
-    if(viewerTeam===null){
-      el.innerHTML=`<div class="tie-box"><div class="wt">⚡ SERI! Tim ${tieTeam} menang tiebreaker!</div><div class="ws">Kedua tim sama-sama selisih ${Math.abs((avg1||0)-g.correctAnswer).toFixed(1)} · ${tieName} jawab lebih dulu</div></div>`;
-    } else if(viewerTeam===tieTeam){
-      el.innerHTML=`<div class="winner-box"><div class="wt">⚡ SERI! Tapi tim kamu menang tiebreaker!</div><div class="ws">${tieName} dari tim kamu jawab lebih dulu 🎉</div></div>`;
-    } else {
-      el.innerHTML=`<div class="loser-box"><div class="wt">⚡ SERI! Tim ${tieTeam} menang tiebreaker.</div><div class="ws">${tieName} menjawab lebih dulu dari tim ${tieTeam}</div></div>`;
-    }
-    return;
-  }
-
+  if(!winner){el.innerHTML='';return;}
+  const d1=avg1!==null?Math.abs(avg1-g.correctAnswer):null;
+  const d2=avg2!==null?Math.abs(avg2-g.correctAnswer):null;
+  const isTie=d1!==null&&d2!==null&&Math.abs(d1-d2)<0.0001;
+  const tieNote=isTie?` <span style="font-size:11px;opacity:.7">(seri — penentu: jawab lebih dulu)</span>`:'';
+  const avgW=((winner===1?avg1:avg2)||0).toFixed(1);
   if(viewerTeam===null){
-    el.innerHTML=`<div class="winner-box"><div class="wt">🏆 Tim ${winner} berhak menggerakkan pion!</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata Tim ${winner}: ${avgWStr}</div></div>`;
+    el.innerHTML=`<div class="winner-box"><div class="wt">🏆 Tim ${winner} berhak menggerakkan pion!${tieNote}</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata Tim ${winner}: ${avgW}</div></div>`;
   } else if(viewerTeam===winner){
-    el.innerHTML=`<div class="winner-box"><div class="wt">🎉 Tim kamu berhak menggerakkan pion!</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata tim kamu: ${avgWStr}</div></div>`;
+    el.innerHTML=`<div class="winner-box"><div class="wt">🎉 Tim kamu berhak menggerakkan pion!${tieNote}</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata tim kamu: ${avgW}</div></div>`;
   } else {
     const avgMine=((viewerTeam===1?avg1:avg2)||0).toFixed(1);
-    el.innerHTML=`<div class="loser-box"><div class="wt">😔 Tim ${winner} menggerakkan pion.</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata timmu: ${avgMine}</div></div>`;
+    el.innerHTML=`<div class="loser-box"><div class="wt">😔 Tim ${winner} menggerakkan pion.${tieNote}</div><div class="ws">Jawaban benar: ${g.correctAnswer} · Rata-rata timmu: ${avgMine}</div></div>`;
   }
 }
 
-/* ═══════ BOARD ═══════ */
+/* ═══════════════════════════════════════
+   REJOIN NOTIFICATIONS (admin)
+═══════════════════════════════════════ */
+function renderRejoinNotifs(g,panelId,listId){
+  const panel=document.getElementById(panelId);
+  const list=document.getElementById(listId);
+  if(!panel||!list) return;
+  const pending=(g.rejoinRequests||[]).filter(r=>r.status==='pending');
+  if(!pending.length){panel.style.display='none';return;}
+  panel.style.display='block';
+  list.innerHTML=pending.map(r=>`
+    <div class="rejoin-notif">
+      <div class="rj-info">
+        <div class="rj-name">👤 ${r.name}</div>
+        <div class="rj-sub">Tim ${r.team} · Minta masuk kembali</div>
+      </div>
+      <div class="rj-btns">
+        <button class="btn-approve" onclick="approveRejoin('${r.name}')">✓ Izinkan</button>
+        <button class="btn-deny" onclick="denyRejoin('${r.name}')">✕ Tolak</button>
+      </div>
+    </div>`).join('');
+}
+
+async function approveRejoin(name){
+  const d=await api('POST','/api/rejoin-approve',{code:myCode,name});
+  if(d.error) return alert2('al-ar',d.error,'e');
+}
+async function denyRejoin(name){
+  await api('POST','/api/rejoin-deny',{code:myCode,name});
+}
+
+/* ═══════════════════════════════════════
+   BOARD — STATE
+═══════════════════════════════════════ */
 const COLS=9,ROWS=4;
 const ROW_LABELS=['A','B','C','D'];
 const COL_LABELS=['1','2','3','4','5','6','7','8','9'];
-const PIECE_SYM={1:{pawn:'♟',knight:'♞',king:'♛',rook:'♜'},2:{pawn:'♙',knight:'♘',king:'♕',rook:'♖'}};
+const PIECE_SYM={
+  1:{pawn:'♟',knight:'♞',king:'♛',rook:'♜'},
+  2:{pawn:'♙',knight:'♘',king:'♕',rook:'♖'}
+};
 
 let boardCode=null,boardState=null,boardPollT=null;
 let boardArr=[],selected=null,validMoves=[];
 let currentTurn=1,movingTeam=null,boardRound=1,gameOver=false,lastRound=0;
 
+/* ═══════════════════════════════════════
+   BOARD — CONNECT
+═══════════════════════════════════════ */
 async function connectBoard(){
   const code=document.getElementById('cn-code').value.trim();
   if(!code||code.length<4) return showBoardAlert('al-cn','Masukkan kode yang valid','e');
@@ -1008,25 +1206,36 @@ async function connectBoard(){
 }
 
 function disconnectBoard(){
-  stopBoardPoll(); boardCode=null; gameOver=false; selected=null; validMoves=[];
+  stopBoardPoll();
+  boardCode=null; gameOver=false;
+  selected=null; validMoves=[];
   goto('s-home');
 }
 
+/* ═══════════════════════════════════════
+   BOARD — INIT & RENDER
+═══════════════════════════════════════ */
 function initBoard(){
   boardArr=Array(ROWS).fill(null).map(()=>Array(COLS).fill(null));
-  boardArr[0][0]={type:'pawn',team:1};boardArr[1][0]={type:'knight',team:1};
-  boardArr[2][0]={type:'king',team:1};boardArr[3][0]={type:'rook',team:1};
-  boardArr[0][8]={type:'rook',team:2};boardArr[1][8]={type:'king',team:2};
-  boardArr[2][8]={type:'knight',team:2};boardArr[3][8]={type:'pawn',team:2};
+  boardArr[0][0]={type:'pawn',team:1};
+  boardArr[1][0]={type:'knight',team:1};
+  boardArr[2][0]={type:'king',team:1};
+  boardArr[3][0]={type:'rook',team:1};
+  boardArr[0][8]={type:'rook',team:2};
+  boardArr[1][8]={type:'king',team:2};
+  boardArr[2][8]={type:'knight',team:2};
+  boardArr[3][8]={type:'pawn',team:2};
 }
 
 function renderBoard(){
   const container=document.getElementById('board');
   container.innerHTML='';
   const mk=(t)=>{const d=document.createElement('div');d.className='coord';d.textContent=t;return d;};
+
   container.appendChild(mk(''));
   for(let c=0;c<COLS;c++) container.appendChild(mk(COL_LABELS[c]));
   container.appendChild(mk(''));
+
   for(let r=ROWS-1;r>=0;r--){
     container.appendChild(mk(ROW_LABELS[r]));
     for(let c=0;c<COLS;c++){
@@ -1053,26 +1262,61 @@ function renderBoard(){
   container.appendChild(mk(''));
 }
 
+/* ═══════════════════════════════════════
+   BOARD — MOVES
+═══════════════════════════════════════ */
 function getValidMoves(r,c){
-  const piece=boardArr[r][c]; if(!piece) return [];
+  const piece=boardArr[r][c];
+  if(!piece) return [];
   const moves=[];
   const inB=(r,c)=>r>=0&&r<ROWS&&c>=0&&c<COLS;
   const isEmpty=(r,c)=>inB(r,c)&&!boardArr[r][c];
   const isEnemy=(r,c)=>inB(r,c)&&boardArr[r][c]&&boardArr[r][c].team!==piece.team;
   const add=(r,c,cap=false)=>{if(inB(r,c))moves.push({r,c,capture:cap});};
-  if(piece.type==='pawn'){const dir=piece.team===1?1:-1;if(isEmpty(r,c+dir))add(r,c+dir);if(isEnemy(r-1,c+dir))add(r-1,c+dir,true);if(isEnemy(r+1,c+dir))add(r+1,c+dir,true);}
-  if(piece.type==='king'){for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;if(isEmpty(r+dr,c+dc))add(r+dr,c+dc);else if(isEnemy(r+dr,c+dc))add(r+dr,c+dc,true);}}
-  if(piece.type==='knight'){for(const[dr,dc]of[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){if(isEmpty(r+dr,c+dc))add(r+dr,c+dc);else if(isEnemy(r+dr,c+dc))add(r+dr,c+dc,true);}}
-  if(piece.type==='rook'){for(const[dr,dc]of[[0,1],[0,-1],[1,0],[-1,0]]){let nr=r+dr,nc=c+dc;while(inB(nr,nc)){if(isEmpty(nr,nc)){add(nr,nc);}else if(isEnemy(nr,nc)){add(nr,nc,true);break;}else break;nr+=dr;nc+=dc;}}}
+
+  if(piece.type==='pawn'){
+    const dir=piece.team===1?1:-1;
+    if(isEmpty(r,c+dir)) add(r,c+dir);
+    if(isEnemy(r-1,c+dir)) add(r-1,c+dir,true);
+    if(isEnemy(r+1,c+dir)) add(r+1,c+dir,true);
+  }
+  if(piece.type==='king'){
+    for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
+      if(!dr&&!dc) continue;
+      if(isEmpty(r+dr,c+dc)) add(r+dr,c+dc);
+      else if(isEnemy(r+dr,c+dc)) add(r+dr,c+dc,true);
+    }
+  }
+  if(piece.type==='knight'){
+    for(const [dr,dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){
+      if(isEmpty(r+dr,c+dc)) add(r+dr,c+dc);
+      else if(isEnemy(r+dr,c+dc)) add(r+dr,c+dc,true);
+    }
+  }
+  if(piece.type==='rook'){
+    for(const [dr,dc] of [[0,1],[0,-1],[1,0],[-1,0]]){
+      let nr=r+dr,nc=c+dc;
+      while(inB(nr,nc)){
+        if(isEmpty(nr,nc)){add(nr,nc);}
+        else if(isEnemy(nr,nc)){add(nr,nc,true);break;}
+        else break;
+        nr+=dr;nc+=dc;
+      }
+    }
+  }
   return moves;
 }
 
 function handleCellClick(r,c){
-  if(gameOver||movingTeam===null) return;
+  if(gameOver) return;
+  if(movingTeam===null) return;
   const piece=boardArr[r][c];
   if(selected&&validMoves.find(m=>m.r===r&&m.c===c)){doMove(selected.r,selected.c,r,c);return;}
-  if(piece&&piece.team===movingTeam){selected={r,c};validMoves=getValidMoves(r,c);renderBoard();}
-  else{selected=null;validMoves=[];renderBoard();}
+  if(piece&&piece.team===movingTeam){
+    selected={r,c};validMoves=getValidMoves(r,c);renderBoard();
+  } else {
+    selected=null;validMoves=[];renderBoard();
+  }
 }
 
 function doMove(fr,fc,tr,tc){
@@ -1099,6 +1343,9 @@ function endGame(winner){
   addLog(`🏆 GAME OVER — Tim ${winner} menang!`,'log-win');
 }
 
+/* ═══════════════════════════════════════
+   BOARD — CORRECT ANSWER & NEXT ROUND
+═══════════════════════════════════════ */
 async function nextRoundBoard(){
   const d=await api('POST','/api/nextround',{code:boardCode});
   if(d.error) return addLog('Error nextround: '+d.error,'log-err');
@@ -1106,12 +1353,15 @@ async function nextRoundBoard(){
   movingTeam=null;
   document.getElementById('result-area').innerHTML='';
   document.getElementById('avg-grid').style.display='none';
-  document.getElementById('result-panel').style.display='none';
   document.getElementById('next-round-panel').style.display='none';
   document.getElementById('move-prompt').style.display='none';
+  document.getElementById('board-result-panel').style.display='none';
   addLog(`--- Ronde ${d.round} dimulai. Giliran Tim ${currentTurn} ---`,'log-q');
 }
 
+/* ═══════════════════════════════════════
+   BOARD — POLLING
+═══════════════════════════════════════ */
 function startBoardPoll(){stopBoardPoll();pollBoard();boardPollT=setInterval(pollBoard,2000);}
 function stopBoardPoll(){if(boardPollT){clearInterval(boardPollT);boardPollT=null;}}
 
@@ -1139,7 +1389,7 @@ async function pollBoard(){
     if(g.round!==lastRound){
       document.getElementById('result-area').innerHTML='';
       document.getElementById('avg-grid').style.display='none';
-      document.getElementById('result-panel').style.display='none';
+      document.getElementById('board-result-panel').style.display='none';
     }
   }
   lastRound=g.round;
@@ -1147,70 +1397,59 @@ async function pollBoard(){
 }
 
 function renderAnswerChips(g){
-  const t1p=g.players.filter(p=>p.team===1),t2p=g.players.filter(p=>p.team===2);
+  const t1players=g.players.filter(p=>p.team===1);
+  const t2players=g.players.filter(p=>p.team===2);
   const t1ans=g.answers.filter(a=>a.team===1&&a.round===g.round);
   const t2ans=g.answers.filter(a=>a.team===2&&a.round===g.round);
   const mkChips=(players,answers)=>players.map(p=>{
     const done=answers.find(a=>a.name===p.name);
-    if(p.online===false) return `<span class="chip offline">✕ ${p.name}</span>`;
     return `<span class="chip ${done?'answered':'waiting'}">${done?'✓':''} ${p.name}</span>`;
   }).join('');
-  document.getElementById('t1-chips').innerHTML=mkChips(t1p,t1ans);
-  document.getElementById('t2-chips').innerHTML=mkChips(t2p,t2ans);
+  document.getElementById('t1-chips').innerHTML=mkChips(t1players,t1ans);
+  document.getElementById('t2-chips').innerHTML=mkChips(t2players,t2ans);
   document.getElementById('ans-status-lbl').textContent=
-    `Jawaban masuk: T1 ${t1ans.length}/${t1p.length} · T2 ${t2ans.length}/${t2p.length}`;
+    `Jawaban masuk: T1 ${t1ans.length}/${t1players.length} · T2 ${t2ans.length}/${t2players.length}`;
 }
 
 function showBoardResult(g,avg1,avg2){
   const correct=g.correctAnswer;
   const d1=avg1!==null?Math.abs(avg1-correct):Infinity;
   const d2=avg2!==null?Math.abs(avg2-correct):Infinity;
-  const isTie=Math.abs(d1-d2)<0.0001&&d1!==Infinity&&d2!==Infinity;
   const winner=calcWinner(g,avg1,avg2);
+  const isTie=isFinite(d1)&&isFinite(d2)&&Math.abs(d1-d2)<0.0001;
 
   const ag=document.getElementById('avg-grid');
   ag.style.display='grid';
   document.getElementById('avg-num-1').textContent=avg1!==null?avg1.toFixed(1):'—';
   document.getElementById('avg-num-2').textContent=avg2!==null?avg2.toFixed(1):'—';
-  document.getElementById('avg-box-1').className='avg-box-b'+(isTie?' tie-box':winner===1?' win-box':'');
-  document.getElementById('avg-box-2').className='avg-box-b'+(isTie?' tie-box':winner===2?' win-box':'');
+  document.getElementById('avg-box-1').className='avg-box-b'+(winner===1?' win-box':'');
+  document.getElementById('avg-box-2').className='avg-box-b'+(winner===2?' win-box':'');
 
+  const tieNote=isTie?'<br><span style="font-size:11px;opacity:.7">⚖️ Seri — pemenang: jawab lebih dulu</span>':'';
   const ra=document.getElementById('result-area');
-  const rp=document.getElementById('result-panel');
-  rp.style.display='block';
+  ra.innerHTML=`
+    <div class="result-banner win" style="margin-top:10px">
+      <div class="rb-big">🏆 Tim ${winner} berhak jalan!${tieNote}</div>
+      <div class="rb-sm">Jawaban benar: ${correct} · Selisih T${winner}: ${(winner===1?d1:d2).toFixed(1)}</div>
+    </div>`;
 
-  if(isTie){
-    const tieName=g.tiebreakerName||'?';
-    const tieTeam=g.tiebreaker||winner;
-    ra.innerHTML=`
-      <div class="result-banner tie">
-        <div class="rb-big">⚡ SERI! Tim ${tieTeam} menang tiebreaker</div>
-        <div class="rb-sm">${tieName} menjawab pertama · Jawaban benar: ${correct}</div>
-      </div>`;
-    if(movingTeam===null&&!gameOver){
-      movingTeam=tieTeam;
-      const mp=document.getElementById('move-prompt');
-      mp.style.display='block';
-      document.getElementById('move-prompt-lbl').textContent=`Persilakan Tim ${tieTeam} memilih bidak di papan ↑`;
-    }
-  } else {
-    ra.innerHTML=`
-      <div class="result-banner win">
-        <div class="rb-big">🏆 Tim ${winner} berhak jalan!</div>
-        <div class="rb-sm">Jawaban benar: ${correct} · Selisih T${winner}: ${(winner===1?d1:d2).toFixed(1)}</div>
-      </div>`;
-    if(movingTeam===null&&!gameOver){
-      movingTeam=winner;
-      const mp=document.getElementById('move-prompt');
-      mp.style.display='block';
-      document.getElementById('move-prompt-lbl').textContent=`Persilakan Tim ${winner} memilih bidak di papan ↑`;
+  document.getElementById('board-result-panel').style.display='block';
+  if(movingTeam===null&&!gameOver){
+    movingTeam=winner;
+    const mp=document.getElementById('move-prompt');
+    mp.style.display='block';
+    document.getElementById('move-prompt-lbl').textContent=`Persilakan Tim ${winner} memilih bidak di papan ↑`;
+    if(winner!==currentTurn){
+      addLog(`Ronde ${g.round}: Tim ${winner} lebih dekat (bukan giliran tapi berhak jalan)`,'log-q');
     }
   }
 }
 
 function updateTurnUI(){
-  document.getElementById('badge-t1').className='team-status'+(currentTurn===1?' t1-active':'');
-  document.getElementById('badge-t2').className='team-status'+(currentTurn===2?' t2-active':'');
+  const b1=document.getElementById('badge-t1');
+  const b2=document.getElementById('badge-t2');
+  b1.className='team-status'+(currentTurn===1?' active-turn t1-active':'');
+  b2.className='team-status'+(currentTurn===2?' active-turn t2-active':'');
   document.getElementById('t1-status').textContent=currentTurn===1?'🎯 Giliran ini':'Menunggu';
   document.getElementById('t2-status').textContent=currentTurn===2?'🎯 Giliran ini':'Menunggu';
   document.getElementById('turn-chip').textContent=currentTurn===1?'▶':'◀';
@@ -1223,22 +1462,32 @@ function resetBoardGame(){
   document.getElementById('modal-win').classList.add('hidden');
   document.getElementById('result-area').innerHTML='';
   document.getElementById('avg-grid').style.display='none';
-  document.getElementById('result-panel').style.display='none';
   document.getElementById('next-round-panel').style.display='none';
   document.getElementById('move-prompt').style.display='none';
+  document.getElementById('board-result-panel').style.display='none';
   document.getElementById('log').innerHTML='<p>Game direset. Tim 1 jalan pertama.</p>';
   addLog('Game baru dimulai.','log-move');
 }
 
+/* ═══════════════════════════════════════
+   BOARD — HELPERS
+═══════════════════════════════════════ */
 function showBoardAlert(id,msg,type){
-  const el=document.getElementById(id); if(!el) return;
-  el.textContent=msg; el.className='alert '+type;
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.textContent=msg;
+  el.className='alert '+type;
   setTimeout(()=>{if(el)el.className='alert';},3000);
 }
+
 function addLog(msg,cls=''){
-  const log=document.getElementById('log'); if(!log) return;
-  const p=document.createElement('p'); if(cls) p.className=cls;
-  p.textContent=msg; log.appendChild(p); log.scrollTop=log.scrollHeight;
+  const log=document.getElementById('log');
+  if(!log) return;
+  const p=document.createElement('p');
+  if(cls) p.className=cls;
+  p.textContent=msg;
+  log.appendChild(p);
+  log.scrollTop=log.scrollHeight;
 }
 </script>
 </body>
