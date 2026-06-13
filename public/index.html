@@ -1489,6 +1489,8 @@ function updateMoveCounterUI(){
     c2.className=near2?'move-warn':'';
   }
 }
+
+function updateTurnUI(){
   const b1=document.getElementById('badge-t1');
   const b2=document.getElementById('badge-t2');
   b1.className='team-status'+(currentTurn===1?' active-turn t1-active':'');
